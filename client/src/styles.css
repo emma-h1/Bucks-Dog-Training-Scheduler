@@ -1,0 +1,58 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+.nav {
+    background-color: #1F2833;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    font-size: 24px;
+    gap: 3rem;
+    padding: 0 1rem;
+}
+
+.nav ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+.nav a {
+    color: inherit;
+    text-decoration: none;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.nav li.active {
+    background-color: teal;
+}
+
+.nav li:hover {
+    background-color: darkgrey;
+}
+
+.logo {
+    height: 100px;
+    width: 100px;
+    margin: 2px;
+}
+
+.btn-signin {
+    border-radius: 10px;
+    align-self: center;
+    height: 50px;
+    width: 170px;
+    margin: 20px;
+    padding: 10px;
+    background-color: #4bbcc9;
+}

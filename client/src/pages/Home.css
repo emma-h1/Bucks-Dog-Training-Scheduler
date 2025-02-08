@@ -1,0 +1,28 @@
+
+.div container {
+    backgroundImage: url(../assets/dogRunning.jpeg);
+    backgroundPosition: 'center';
+    backgroundSize: 'cover';
+    backgroundRepeat: 'no-repeat';
+    width: 100vw;
+    height: 100vh;
+}
+
+.header {
+    color: white;
+    font-size: 58px;
+    font-weight: 800;
+    padding: 20px;
+    padding-top: 10vh;
+    padding-left: 100px;
+    width: 40vw;
+}
+
+.text {
+    color: white;
+    font-size: 24px;
+    font-weight: 500;
+    padding: 20px;
+    padding-left: 100px;
+    width: 40vw;
+}

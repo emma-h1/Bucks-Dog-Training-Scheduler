@@ -1,4 +1,12 @@
 import React, {useEffect, useState} from 'react';
+import Navbar from"./Navbar"
+import About from "./pages/About"
+import Contact from "./pages/Contact"
+import Services from "./pages/Services"
+import SignIn from "./pages/SignIn"
+import Home from "./pages/Home"
+import { Route, Routes } from "react-router-dom"
+import DecideShowNavbar from './DecideShowNavbar.js';
 
 function App() {
 
@@ -9,12 +17,25 @@ function App() {
       .then(response => response.json())
       .then(data=>setBackendData(data))
   },[])
+
     return (
-        <div>
+      <>
+      <DecideShowNavbar>
+        <Navbar />
+      </DecideShowNavbar>
 
-        </div>
-
+      <div className="container">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/signin" element={<SignIn />} />
+        </Routes>
+      </div>
+      </>
     )
+
 }
 
 export default App
