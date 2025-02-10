@@ -1,8 +1,23 @@
 import logo from "./assets/logoNoText.png";
 import icon from "./assets/userIcon.png";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
+import { auth } from "./firebase";
+import { signOut } from "firebase/auth";
+import Dropdown from "react-bootstrap/Dropdown";
+import { useState } from "react";
+import React from "react";
+import "bootstrap/dist/css/bootstrap.css";
 
 export default function Navbar() {
+
+    const user = auth.currentUser;
+    const [show, setShow] = useState(false);
+
+    const handleLogout = () => {
+        signOut(auth).then(() => {
+            window.location.reload();});
+    };
+
     return (
         <nav className="nav">
 
@@ -19,14 +34,28 @@ export default function Navbar() {
 
         </ul>
 
-
-        <ul className="btn-signin">
-            <img src={icon} className="icon" />
-
-                <Link to="/signin">SIGN IN</Link>
-
-        </ul>
-
+        {user ? (
+            <div className="user">
+                <Dropdown >
+                    <Dropdown.Toggle className="user-info">
+                        {user.email} 
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                        <Dropdown.Item href="/profile">Manage Profile</Dropdown.Item>
+                        <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
+            </div>
+                
+            ) : (
+                <ul className="btn-signin">
+                    <img src={icon} className="icon" height={50}
+                         width={50}/>
+                    <Link to="/login" className="signin">
+                        SIGN IN
+                    </Link>
+                </ul>
+            )}
     </nav>
     );
 }

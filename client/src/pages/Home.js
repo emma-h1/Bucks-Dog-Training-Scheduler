@@ -8,7 +8,7 @@ const bgStyle = {
   backgroundPosition: 'center',
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
-  width: '100vw',
+  width: '78vw',
   height: '90vh',
 };
 
@@ -35,11 +35,6 @@ export default function Home() {
         and we believe in the transformative power of a balanced approach to dog training.
       </div>
 
-      {user && (
-        <div className="user-info">
-          <p>Welcome, {user.email}</p> {/* Display the user's email */}
-        </div>
-      )}
     </div>
   );
 }

@@ -51,8 +51,15 @@ body {
     border-radius: 10px;
     align-self: center;
     height: 50px;
-    width: 170px;
+    width: 200px;
     margin: 20px;
     padding: 10px;
     background-color: #4bbcc9;
+}
+
+.user-info {
+    
+    background-color: #4bbcc9 !important;
+    align-self: center;
+    margin-top: 30px;
 }

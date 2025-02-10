@@ -36,7 +36,7 @@ export default function SignUp() {
     //     username,
     //   });
 
-      navigate("/dashboard"); // Redirect user after sign-up
+      navigate("/"); // Redirect user after sign-up
     } catch (err) {
       setError(err.message);
     }

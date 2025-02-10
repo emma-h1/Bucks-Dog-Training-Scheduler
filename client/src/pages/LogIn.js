@@ -36,7 +36,7 @@ export default function LogIn() {
 
         // Optionally, handle the response here (e.g., navigate or display a message)
         if (response.ok) {
-          navigate("/dashboard"); // Redirect to dashboard after successful login
+          navigate("/"); // Redirect to dashboard after successful login
         } else {
           setError("Failed to fetch protected route");
         }
@@ -106,7 +106,7 @@ export default function LogIn() {
             <p>
               Don't have an account? 
               <span>
-                <Link to="/signup"> Sign Up</Link>
+                <Link to="/signin"> Sign Up</Link>
               </span>
             </p>
           </div>
