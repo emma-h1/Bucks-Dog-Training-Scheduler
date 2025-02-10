@@ -5,6 +5,7 @@ import Contact from "./pages/Contact"
 import Services from "./pages/Services"
 import SignIn from "./pages/SignIn"
 import Home from "./pages/Home"
+import LogIn from "./pages/LogIn"
 import { Route, Routes } from "react-router-dom"
 import DecideShowNavbar from './DecideShowNavbar.js';
 
@@ -31,6 +32,7 @@ function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/login" element={<LogIn />} />
         </Routes>
       </div>
       </>

@@ -1,0 +1,50 @@
+.title {
+    color: black;
+    font-size: 28px;
+
+}
+
+.form-signin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px;
+}
+
+.input {
+    width: 25vw;
+    height: 30px;
+    border-radius: 5px;
+    gap: 10px;
+    margin: 15px;
+}
+
+.input input {
+    height: 30px;
+    width: 25vw;
+    font-size: 14px;
+}
+
+.login {
+    margin-top: 15px;
+}
+
+.container-signin {
+    margin-top: 25px;
+    display: flex;
+    height: 93vh;
+    width: 35vw;
+    min-width: 500px;
+    border-radius: 10px;
+    overflow: auto;
+    flex-direction: column;
+    text-align: center;
+    justify-self: center;
+    background-color: white;
+}
+
+body {
+    background-color: #809fa3;
+}

@@ -1,8 +1,7 @@
 import logo from "../assets/logoNoText.png"
 import { Link } from "react-router-dom"
-import "./SignIn.css"
 
-export default function SignIn() {
+export default function LogIn() {
 
 
     return (
@@ -16,25 +15,12 @@ export default function SignIn() {
             />
 
             <div className="title">
-                <h1>Sign In</h1>
+                <h1>Log In</h1>
             </div>
 
             {/*This is the input form for the user's info*/}
             <div className="form-signin">
                 <form >
-
-                    <div className="input">
-                        <input type="text" placeholder="First Name" name="first"  required/>
-                    </div>
-
-                    <div className="input">
-                        <input type="text" placeholder="Last Name" name="last"  required/>
-                    </div>
-
-                    <div className="input">
-                        <input type="text" placeholder="Username" name="username"  required/>
-                    </div>
-
                     <div className="input">
                         <input type="text" placeholder="Email" name="email"  required/>
                     </div>
@@ -43,24 +29,28 @@ export default function SignIn() {
                         <input type="password" placeholder="Password" name="password" required/>
                     </div>
 
-                    <div className="input">
-                        <input type="password" placeholder="Confirm Password" name="confirm" required/>
-                    </div>
-
                     <button className="btn btn-success" type="submit" title="submit">
-                        Create Account
+                        Log In
                     </button>
 
                     {/*These are the other options to redirect if user does not want to create acct*/}
-                    <div className="login">
-                        <p>Already a user?
+                    <div className="forgot-password">
+                        <p>Forgot Password?
                             <span>
-                                <Link to="/login"> Login</Link>
+                                <Link to="/reset-password"> Reset Password</Link>
                             </span>
                         </p>
+                    </div>
 
+                    <div className="return-SignIn">
+                        <p>Return to signin
+                            <span>
+                                <Link to="/signin"> here</Link>
+                            </span>
+                        </p>
                     </div>
                 </form>
+            
             </div>
         </div>
     )

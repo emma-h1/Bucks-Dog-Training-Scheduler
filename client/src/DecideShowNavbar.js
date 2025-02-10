@@ -8,7 +8,7 @@ const DecideShowNavbar = ({ children }) => {
 
     useEffect(() => {
         console.log('location: ', location)
-        if(location.pathname === "/signin") {
+        if(location.pathname === "/signin" || location.pathname === "/login") {
             setShowNavbar(false)
         } else {
             setShowNavbar(true)
