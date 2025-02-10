@@ -69,6 +69,7 @@ export default function LogIn() {
           <div className="input">
             <input
               type="email"
+              id="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -96,9 +97,7 @@ export default function LogIn() {
           <div className="forgot-password">
             <p>
               Forgot Password?
-              <span>
-                <Link to="/reset-password"> Reset Password</Link>
-              </span>
+              <Link to="/reset-password"> Reset Password</Link>
             </p>
           </div>
 
