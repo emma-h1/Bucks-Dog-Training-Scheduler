@@ -3,6 +3,7 @@ import { auth } from "../firebase"; // Import the firebase configuration
 // import "./SignUp.css";
 import logo from "../assets/logoNoText.png";
 import { sendPasswordResetEmail } from "firebase/auth";
+import { Link } from "react-router-dom";
 
 export default function LogIn() {
   const [email, setEmail] = useState("");
@@ -62,6 +63,13 @@ export default function LogIn() {
 
         </form>
       </div>
+      <div className="login">
+            <p>Return to login:
+              <span>
+                <Link to="/login"> Login</Link>
+              </span>
+            </p>
+          </div>
     </div>
   );
 }

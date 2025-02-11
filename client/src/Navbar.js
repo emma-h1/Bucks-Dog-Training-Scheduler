@@ -11,7 +11,6 @@ import "bootstrap/dist/css/bootstrap.css";
 export default function Navbar() {
 
     const user = auth.currentUser;
-    const [show, setShow] = useState(false);
 
     const handleLogout = () => {
         signOut(auth).then(() => {
