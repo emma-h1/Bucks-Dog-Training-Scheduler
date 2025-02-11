@@ -1,6 +1,7 @@
 # Ignore Firebase Admin SDK Service Account File
 /server/bucksdogtraining-82a35-firebase-adminsdk-fbsvc-4fff37689c.json
 /client/firebase.js
+/server/firebase.js
 
 # Ignore environment files
 .env

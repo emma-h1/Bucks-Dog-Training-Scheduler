@@ -1,7 +1,8 @@
-import { auth } from "../firebase"; // Import the firebase configuration
+import { auth } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios"; 
 import logo from "../assets/logoNoText.png";
 import "./SignIn.css";
 
@@ -18,7 +19,6 @@ export default function SignUp() {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    // Check if the passwords match
     if (password !== confirmPassword) {
       setError("Passwords do not match!");
       return;
@@ -27,14 +27,16 @@ export default function SignUp() {
     try {
       // Create user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
-      // Optionally, store additional user information (e.g., firstName, lastName, username) in your Firestore database
       const user = userCredential.user;
-    //   await db.collection("users").doc(user.uid).set({
-    //     firstName,
-    //     lastName,
-    //     username,
-    //   });
+
+      
+      await axios.post("http://localhost:4999/api/auth/register", { //**FIX THIS URL */
+        uid: user.uid,
+        firstName,
+        lastName,
+        username,
+        email,
+      });
 
       navigate("/"); // Redirect user after sign-up
     } catch (err) {
@@ -61,7 +63,6 @@ export default function SignUp() {
         <form onSubmit={handleSignUp}>
           {error && <p className="error-message">{error}</p>}
 
-          {/* First Name */}
           <div className="input">
             <input
               type="text"
@@ -72,7 +73,6 @@ export default function SignUp() {
             />
           </div>
 
-          {/* Last Name */}
           <div className="input">
             <input
               type="text"
@@ -83,7 +83,6 @@ export default function SignUp() {
             />
           </div>
 
-          {/* Username */}
           <div className="input">
             <input
               type="text"
@@ -94,7 +93,6 @@ export default function SignUp() {
             />
           </div>
 
-          {/* Email */}
           <div className="input">
             <input
               type="email"
@@ -105,7 +103,6 @@ export default function SignUp() {
             />
           </div>
 
-          {/* Password */}
           <div className="input">
             <input
               type="password"
@@ -116,7 +113,6 @@ export default function SignUp() {
             />
           </div>
 
-          {/* Confirm Password */}
           <div className="input">
             <input
               type="password"
