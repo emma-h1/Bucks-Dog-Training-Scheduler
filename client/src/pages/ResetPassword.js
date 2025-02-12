@@ -5,7 +5,7 @@ import logo from "../assets/logoNoText.png";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { Link } from "react-router-dom";
 
-export default function LogIn() {
+export default function ResetPassword() {
   const [email, setEmail] = useState("");
 
   const [error, setError] = useState("");
