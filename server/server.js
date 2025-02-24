@@ -77,3 +77,51 @@ app.get('/api/ServiceLibrary', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch services' });
   }
 });
+
+
+app.post('/api/ServiceLibrary', async (req, res) => {
+  try {
+    const { name, description, price } = req.body;
+    const newService = await db.collection('ServiceLibrary').add({
+      name,
+      description,
+      price,
+    });
+    
+    res.status(201).json({ id: newService.id });
+  } catch (error) {
+    console.error('Error creating service:', error);
+    res.status(500).json({ error: 'Failed to create service' });
+  }
+});
+
+// Update a service
+app.put('/api/ServiceLibrary/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, price } = req.body;
+    
+    await db.collection('ServiceLibrary').doc(id).update({
+      name,
+      description,
+      price,
+    });
+    
+    res.json({ message: 'Service updated successfully' });
+  } catch (error) {
+    console.error('Error updating service:', error);
+    res.status(500).json({ error: 'Failed to update service' });
+  }
+});
+
+// Delete a service
+app.delete('/api/ServiceLibrary/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.collection('ServiceLibrary').doc(id).delete();
+    res.json({ message: 'Service deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting service:', error);
+    res.status(500).json({ error: 'Failed to delete service' });
+  }
+});

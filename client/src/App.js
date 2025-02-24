@@ -7,6 +7,7 @@ import SignIn from "./pages/SignIn"
 import Home from "./pages/Home"
 import LogIn from "./pages/LogIn"
 import ResetPassword from "./pages/ResetPassword"
+import ManageServices from './pages/ManageServices.js';
 import { Route, Routes } from "react-router-dom"
 import DecideShowNavbar from './DecideShowNavbar.js';
 
@@ -35,6 +36,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/manage-services" element={<ManageServices />} />
         </Routes>
       </div>
       </>

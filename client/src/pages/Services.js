@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Card, Container, Row, Col, Spinner } from 'react-bootstrap';
+import { Card, Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ServicesPage = () => {
@@ -33,17 +33,20 @@ const ServicesPage = () => {
 
     <Container className="py-4">
         <h1 className="mb-4">Our Services</h1>
-        <ul className="list-unstyled">
+        {/* Services Grid */}
+      <Row xs={1} md={2} lg={3} className="g-4">
         {services.map((service) => (
-            <li key={service.id} className="mb-4">
-            <h3>{service.name}</h3>
-            <p className="text-muted">{service.description}</p>
-            <p className="fw-bold text-primary fs-5">
-                {service.price}
-            </p>
-            </li>
+          <Col key={service.id}>
+            <Card className="h-100 shadow-sm">
+              <Card.Body>
+                <Card.Title>{service.name}</Card.Title>
+                <Card.Text className="text-muted">{service.description}</Card.Text>
+                <Card.Text className="fw-bold">{service.price}</Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
         ))}
-        </ul>
+      </Row>
     </Container>
   );
 };
