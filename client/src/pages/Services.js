@@ -32,16 +32,16 @@ const ServicesPage = () => {
   return (
 
     <Container className="py-4">
-        <h1 className="mb-4">Our Services</h1>
+        <h1 className="mb-4 fw-bold">Our Services</h1>
         {/* Services Grid */}
       <Row xs={1} md={2} lg={3} className="g-4">
         {services.map((service) => (
           <Col key={service.id}>
             <Card className="h-100 shadow-sm">
               <Card.Body>
-                <Card.Title>{service.name}</Card.Title>
+                <Card.Title className="fw-bold">{service.name}</Card.Title>
                 <Card.Text className="text-muted">{service.description}</Card.Text>
-                <Card.Text className="fw-bold">{service.price}</Card.Text>
+                <Card.Text className="text-primary">{service.price}</Card.Text>
               </Card.Body>
             </Card>
           </Col>

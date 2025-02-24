@@ -78,7 +78,7 @@ app.get('/api/ServiceLibrary', async (req, res) => {
   }
 });
 
-
+//  Create a service
 app.post('/api/ServiceLibrary', async (req, res) => {
   try {
     const { name, description, price } = req.body;
@@ -123,5 +123,65 @@ app.delete('/api/ServiceLibrary/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting service:', error);
     res.status(500).json({ error: 'Failed to delete service' });
+  }
+});
+
+// Endpoint to fetch appointments
+app.get('/api/appointments', async (req, res) => {
+  try {
+    console.log('Fetching appointments...');
+    const appointmentsCollection = db.collection('appointments');
+    const appointmentsSnapshot = await appointmentsCollection.get();
+    console.log('Number of documents:', appointmentsSnapshot.size);
+    const appointmentsData = appointmentsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    res.json(appointmentsData);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch appointments' });
+  }
+});
+
+// create appointments
+app.post('/api/appointments', async (req, res) => {
+  try {
+    const { dog, owner, trainer, date, location, dropoffTime, pickupTime, purpose, balanceDue } = req.body;
+    const newAppointment = await db.collection('appointments').add({
+      dog, owner, trainer, date, location, dropoffTime, pickupTime, purpose, balanceDue
+    });
+    res.status(201).json({ id: newAppointment.id });
+  } catch (error) {
+    console.error('Error creating appointment:', error);
+    res.status(500).json({ error: 'Failed to create appointment' });
+  }
+});
+
+// Update an appointment
+app.put('/api/appointments/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { dog, owner, trainer, date, location, dropoffTime, pickupTime, purpose, balanceDue } = req.body;
+    
+    await db.collection('appointments').doc(id).update({
+      dog, owner, trainer, date, location, dropoffTime, pickupTime, purpose, balanceDue
+    });
+    
+    res.json({ message: 'appointment updated successfully' });
+  } catch (error) {
+    console.error('Error updating appointment:', error);
+    res.status(500).json({ error: 'Failed to update appointment' });
+  }
+});
+
+// Delete an appointment
+app.delete('/api/appointments/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.collection('appointments').doc(id).delete();
+    res.json({ message: 'appointment deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting appointment:', error);
+    res.status(500).json({ error: 'Failed to delete appointment' });
   }
 });

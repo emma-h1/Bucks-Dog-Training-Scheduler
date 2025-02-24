@@ -4,13 +4,22 @@ import { Link, useMatch, useResolvedPath } from "react-router-dom";
 import { auth } from "./firebase";
 import { signOut } from "firebase/auth";
 import Dropdown from "react-bootstrap/Dropdown";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 import "bootstrap/dist/css/bootstrap.css";
 
 export default function Navbar() {
 
-    const user = auth.currentUser;
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        // Listen for authentication state changes
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+        setUser(currentUser); // Set user info when the user logs in or out
+        });
+
+        return () => unsubscribe(); // Cleanup the listener on unmount
+    }, []);
 
     const handleLogout = () => {
         signOut(auth).then(() => {

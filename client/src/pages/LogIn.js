@@ -94,10 +94,10 @@ export default function LogIn() {
           </button>
 
           {/* Forgot password and return to sign-up links */}
-          <div className="forgot-password">
+          <div className="forgot-password m-3">
             <p>
               Forgot Password?
-              {/*<Link to="/reset-password"> Reset Password</Link>*/}
+              <Link to="/reset-password"> Reset Password</Link>
             </p>
           </div>
 

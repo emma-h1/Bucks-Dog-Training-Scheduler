@@ -34,7 +34,7 @@ const ManageServices = () => {
       setFormData({
         name: service.name,
         description: service.description,
-        price: service.price.toString()
+        price: service.price
       });
     } else {
       setEditingService(null);
@@ -103,9 +103,9 @@ const ManageServices = () => {
           <Col key={service.id}>
             <Card className="h-100 shadow-sm">
               <Card.Body>
-                <Card.Title>{service.name}</Card.Title>
+                <Card.Title className="fw-bold">{service.name}</Card.Title>
                 <Card.Text className="text-muted">{service.description}</Card.Text>
-                <Card.Text className="fw-bold">{service.price}</Card.Text>
+                <Card.Text className="text-primary">{service.price}</Card.Text>
                 <div className="d-flex gap-2 mt-3">
                   <Button
                     variant="outline-primary"
