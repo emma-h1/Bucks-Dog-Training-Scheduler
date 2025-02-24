@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { auth } from "../firebase"; // Import the firebase configuration
 import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, getIdToken } from "firebase/auth"; // Import getIdToken
 import logo from "../assets/logoNoText.png";
-// import "./SignUp.css";
+// import "./SignIn.css";
 
 export default function LogIn() {
   const [email, setEmail] = useState("");
@@ -97,7 +97,7 @@ export default function LogIn() {
           <div className="forgot-password">
             <p>
               Forgot Password?
-              <Link to="/reset-password"> Reset Password</Link>
+              {/*<Link to="/reset-password"> Reset Password</Link>*/}
             </p>
           </div>
 

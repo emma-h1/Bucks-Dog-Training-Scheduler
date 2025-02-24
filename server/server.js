@@ -49,6 +49,10 @@ app.post("/api/auth/register", async (req, res) => {
   }
 });
 
+app.get('/api', (req, res) => {
+  res.json({ message: 'Hello' });
+});
+
 // Protected route
 app.get("/protected", verifyToken, (req, res) => {
   res.json({ message: "This is a protected route", user: req.user });
@@ -56,3 +60,20 @@ app.get("/protected", verifyToken, (req, res) => {
 
 const PORT = 4999;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Endpoint to fetch ServicesLibrary
+app.get('/api/ServiceLibrary', async (req, res) => {
+  try {
+    console.log('Fetching ServiceLibrary collection...');
+    const servicesCollection = db.collection('ServiceLibrary');
+    const servicesSnapshot = await servicesCollection.get();
+    console.log('Number of documents:', servicesSnapshot.size);
+    const servicesData = servicesSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    res.json(servicesData);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch services' });
+  }
+});
