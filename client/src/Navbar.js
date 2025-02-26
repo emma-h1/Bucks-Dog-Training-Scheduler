@@ -9,13 +9,12 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.css";
 
 export default function Navbar() {
-
     const [user, setUser] = useState(null);
 
     useEffect(() => {
         // Listen for authentication state changes
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-        setUser(currentUser); // Set user info when the user logs in or out
+            setUser(currentUser); // Set user info when the user logs in or out
         });
 
         return () => unsubscribe(); // Cleanup the listener on unmount
@@ -23,54 +22,51 @@ export default function Navbar() {
 
     const handleLogout = () => {
         signOut(auth).then(() => {
-            window.location.reload();});
+            window.location.reload();
+        });
     };
 
     return (
         <nav className="nav">
-
             <img src={logo} className="logo" />
-    
-        <ul> 
-            <Link to="/">HOME</Link>
 
-            <CustomLink to="/about">ABOUT</CustomLink>
+            <ul> 
+                <CustomLink to="/">HOME</CustomLink>
+                <CustomLink to="/about">ABOUT</CustomLink>
+                <CustomLink to="/services">SERVICES</CustomLink>  
+                <CustomLink to="/contact">CONTACT</CustomLink>
 
-            <CustomLink to="/services">SERVICES</CustomLink>  
+                {/* Show "Create Trainer" only for the specified email */}
+                {user?.email === "wgrimmer15@gmail.com" && (
+                    <CustomLink to="/create-trainer">CREATE TRAINER</CustomLink>
+                )}
+            </ul>
 
-            <CustomLink to="/contact">CONTACT</CustomLink>
-
-        </ul>
-
-        {user ? (
-            <div className="user">
-                <Dropdown >
-                    <Dropdown.Toggle className="user-info">
-                        {user.email} 
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                        <Dropdown.Item href="/profile">Manage Profile</Dropdown.Item>
-                        <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown>
-            </div>
-                
+            {user ? (
+                <div className="user">
+                    <Dropdown>
+                        <Dropdown.Toggle className="user-info">
+                            {user.email} 
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            <Dropdown.Item href="/profile">Manage Profile</Dropdown.Item>
+                            <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </div>
             ) : (
                 <ul className="btn-signin">
-                    <img src={icon} className="icon" height={50}
-                         width={50}/>
-                    <Link to="/login" className="signin">
-                        SIGN IN
-                    </Link>
+                    <img src={icon} className="icon" height={50} width={50} />
+                    <Link to="/login" className="signin">SIGN IN</Link>
                 </ul>
             )}
-    </nav>
+        </nav>
     );
 }
 
-function CustomLink({to, children, ...props }) {
+function CustomLink({ to, children, ...props }) {
     const resolvedPath = useResolvedPath(to);
-    const isActive = useMatch({ path: resolvedPath.pathname, end: true })
+    const isActive = useMatch({ path: resolvedPath.pathname, end: true });
     return (
         <li className={isActive ? "active" : ""}>
             <Link to={to} {...props}>

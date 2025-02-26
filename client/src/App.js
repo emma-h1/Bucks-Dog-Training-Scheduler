@@ -1,29 +1,51 @@
-import React, {useEffect, useState} from 'react';
-import Navbar from"./Navbar"
-import About from "./pages/About"
-import Contact from "./pages/Contact"
-import Services from "./pages/Services"
-import SignIn from "./pages/SignIn"
-import Home from "./pages/Home"
-import LogIn from "./pages/LogIn"
-import ResetPassword from "./pages/ResetPassword"
+import React, { useEffect, useState } from 'react';
+import Navbar from "./Navbar";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Services from "./pages/Services";
+import SignIn from "./pages/SignIn";
+import Home from "./pages/Home";
+import LogIn from "./pages/LogIn";
+import ResetPassword from "./pages/ResetPassword";
 import ManageServices from './pages/ManageServices.js';
 import ManageAppointments from './pages/ManageAppointments.js';
-import { Route, Routes } from "react-router-dom"
+import { Route, Routes, useNavigate } from "react-router-dom";
 import DecideShowNavbar from './DecideShowNavbar.js';
+import CreateTrainer from './pages/CreateTrainer.js';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from './firebase';
+
+// ProtectedRoute Component
+const ProtectedRoute = ({ children }) => {
+  const [user, loading] = useAuthState(auth); // Get the current user
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && user?.email !== "wgrimmer15@gmail.com") {
+      // If the user is not the administrator, redirect to the home page
+      navigate("/");
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading spinner while checking the user
+  }
+
+  // If the user is the administrator, render the children (e.g., the CreateTrainer page)
+  return user?.email === "wgrimmer15@gmail.com" ? children : null;
+};
 
 function App() {
-
-  const [backendData, setBackendData] = useState([{}])
+  const [backendData, setBackendData] = useState([{}]);
 
   useEffect(() => {
     fetch('http://localhost:4999/api')
       .then(response => response.json())
-      .then(data=>setBackendData(data))
-  },[])
+      .then(data => setBackendData(data));
+  }, []);
 
-    return (
-      <>
+  return (
+    <>
       <DecideShowNavbar>
         <Navbar />
       </DecideShowNavbar>
@@ -39,11 +61,18 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/manage-services" element={<ManageServices />} />
           <Route path="/manage-appointments" element={<ManageAppointments />} />
+          <Route
+            path="/create-trainer"
+            element={
+              <ProtectedRoute>
+                <CreateTrainer />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
-      </>
-    )
-
+    </>
+  );
 }
 
-export default App
+export default App;

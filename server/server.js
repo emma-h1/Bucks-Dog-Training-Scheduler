@@ -49,6 +49,27 @@ app.post("/api/auth/register", async (req, res) => {
   }
 });
 
+app.post("/api/auth/registerTrainer", async (req, res) => {
+  try {
+    const { uid, firstName, lastName, username, email} = req.body;
+
+    // Store trainer data in Firestore under "trainers" collection
+    await db.collection("trainers").doc(uid).set({
+      firstName,
+      lastName,
+      username,
+      email,
+      createdAt: new Date(),
+    });
+
+    res.status(201).json({ message: "Trainer registered successfully!" });
+  } catch (error) {
+    console.error("Error saving trainer:", error);
+    res.status(500).json({ error: "Failed to save trainer data" });
+  }
+});
+
+
 app.get('/api', (req, res) => {
   res.json({ message: 'Hello' });
 });
