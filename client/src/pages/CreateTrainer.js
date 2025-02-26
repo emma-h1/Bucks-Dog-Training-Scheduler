@@ -27,23 +27,22 @@ export default function SignUp() {
     }
 
     try {
-      const adminEmail = "wgrimmer15@gmail.com";
+      const adminEmail = "wgrimmer15@gmail.com"; // Will change in futute to check for ADMIN bool
       const currentUser = auth.currentUser;
 
       if (currentUser && currentUser.email === adminEmail) {
         if (!adminPassword) {
-          setIsPasswordPromptVisible(true); // Show the password input if not entered yet
-          return; // Wait for the password input to be filled
+          setIsPasswordPromptVisible(true);
+          return; 
         }
 
-        // Temporarily sign out the administrator
+        
         await signOut(auth);
 
-        // Create the trainer account
+        // Trainer creation call
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Store trainer data in Firestore
         await axios.post("http://localhost:4999/api/auth/registerTrainer", { 
           uid: user.uid,
           firstName,
@@ -52,8 +51,8 @@ export default function SignUp() {
           email,
         });
 
-        // Sign the administrator back in with the entered password
         await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
+        //resets all fields to blank
 
         setSuccessMessage("Trainer account created successfully! Administrator session restored.");
         setFirstName("");
@@ -88,8 +87,7 @@ export default function SignUp() {
         <h1>Trainer Sign Up</h1>
       </div>
 
-      {/* Password prompt for the admin to confirm their identity */}
-      {isPasswordPromptVisible && (
+      {isPasswordPromptVisible && ( //small value button as popup did not keep password hidden
         <div className="password-prompt">
           <input
             type="password"

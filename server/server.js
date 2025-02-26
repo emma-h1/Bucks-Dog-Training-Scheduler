@@ -28,12 +28,12 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-// User Registration Route
+// Users register
 app.post("/api/auth/register", async (req, res) => {
   try {
     const { uid, firstName, lastName, username, email } = req.body;
 
-    // Store user data in Firestore
+
     await db.collection("users").doc(uid).set({
       firstName,
       lastName,
@@ -48,12 +48,11 @@ app.post("/api/auth/register", async (req, res) => {
     res.status(500).json({ error: "Failed to save user data" });
   }
 });
-
+//Trainer Register
 app.post("/api/auth/registerTrainer", async (req, res) => {
   try {
     const { uid, firstName, lastName, username, email} = req.body;
 
-    // Store trainer data in Firestore under "trainers" collection
     await db.collection("trainers").doc(uid).set({
       firstName,
       lastName,
