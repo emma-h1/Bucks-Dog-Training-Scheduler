@@ -22,7 +22,7 @@ body {
     margin: 0;
     list-style: none;
     display: flex;
-    gap: 1rem;
+    gap: 3rem;
 }
 
 .nav a {
@@ -34,11 +34,11 @@ body {
 }
 
 .nav li.active {
-    background-color: teal;
+    background-color: rgb(50, 79, 92);
 }
 
 .nav li:hover {
-    background-color: darkgrey;
+    background-color: rgb(42, 51, 110);
 }
 
 .logo {

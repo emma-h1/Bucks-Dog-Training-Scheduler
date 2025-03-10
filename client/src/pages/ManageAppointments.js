@@ -128,7 +128,7 @@ const ManageAppointments = () => {
       {/* Error Message */}
       {error && <Alert variant="danger">{error}</Alert>}
 
-      {/* Services Grid */}
+      {/* Appointment Grid */}
       <Row xs={1} className="g-0">
         {appointments.map((appointment) => (
         <Col key={appointment.id}>

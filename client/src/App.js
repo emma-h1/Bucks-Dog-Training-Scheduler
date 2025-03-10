@@ -9,6 +9,11 @@ import LogIn from "./pages/LogIn";
 import ResetPassword from "./pages/ResetPassword";
 import ManageServices from './pages/ManageServices.js';
 import ManageAppointments from './pages/ManageAppointments.js';
+import Calendar from './pages/Calendar.js';
+import OurTeam from './pages/OurTeam.js';
+import AdminDashboard from './pages/AdminDashboard.js';
+import ManageUsers from './pages/ManageUsers.js';
+import ManageTrainers from './pages/ManageTrainers.js';
 import { Route, Routes, useNavigate } from "react-router-dom";
 import DecideShowNavbar from './DecideShowNavbar.js';
 import CreateTrainer from './pages/CreateTrainer.js';
@@ -21,7 +26,7 @@ const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && user?.email !== "wgrimmer15@gmail.com") {
+    if (!loading && user?.email !== "wgrimmer15@gmail.com" || user?.email !== "esheiser@loyola.edu") {
       // If the user is not the administrator, redirect to the home page
       navigate("/");
     }
@@ -32,7 +37,7 @@ const ProtectedRoute = ({ children }) => {
   }
 
   // If the user is the administrator, render the children (e.g., the CreateTrainer page)
-  return user?.email === "wgrimmer15@gmail.com" ? children : null;
+  return user?.email === "wpgrimmer15@gmail.com" ? children : null;
 };
 
 function App() {
@@ -59,8 +64,27 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/manage-services" element={<ManageServices />} />
-          <Route path="/manage-appointments" element={<ManageAppointments />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/our-team" element={<OurTeam />} />
+
+          <Route 
+            path="/manage-services" 
+            element={
+              <ProtectedRoute>
+                <ManageServices />
+              </ProtectedRoute>
+            }
+            />
+
+          <Route 
+            path="/manage-appointments" 
+            element={
+              <ProtectedRoute>
+                <ManageAppointments />
+              </ProtectedRoute>
+            } 
+            />
+          
           <Route
             path="/create-trainer"
             element={
@@ -69,6 +93,34 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/manage-users"
+            element={
+              <ProtectedRoute>
+                <ManageUsers />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/manage-trainers"
+            element={
+              <ProtectedRoute>
+                <ManageTrainers />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin-dashboard"
+            element={
+              
+                <AdminDashboard />
+              
+            }
+          />
+
         </Routes>
       </div>
     </>

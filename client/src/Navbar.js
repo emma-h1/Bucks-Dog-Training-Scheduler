@@ -34,11 +34,16 @@ export default function Navbar() {
                 <CustomLink to="/">HOME</CustomLink>
                 <CustomLink to="/about">ABOUT</CustomLink>
                 <CustomLink to="/services">SERVICES</CustomLink>  
+                <CustomLink to="/our-team">OUR TEAM</CustomLink> 
                 <CustomLink to="/contact">CONTACT</CustomLink>
 
+                {user ? (
+                    <CustomLink to="/calendar">APPOINTMENTS</CustomLink>
+                ) : null}
+
                 {/* Show "Create Trainer" only for the specified email */}
-                {user?.email === "wgrimmer15@gmail.com" && (
-                    <CustomLink to="/create-trainer">CREATE TRAINER</CustomLink>
+                {user?.email === "wgrimmer15@gmail.com" || user?.email === "esheiser@loyola.edu" && (
+                    <CustomLink to="/admin-dashboard">ADMIN DASHBOARD</CustomLink>
                 )}
             </ul>
 

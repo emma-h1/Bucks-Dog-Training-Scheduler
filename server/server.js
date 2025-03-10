@@ -206,3 +206,21 @@ app.delete('/api/appointments/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete appointment' });
   }
 });
+
+
+// Endpoint to fetch trainers
+app.get('/api/trainers', async (req, res) => {
+  try {
+    console.log('Fetching trainers collection...');
+    const trainersCollection = db.collection('trainers');
+    const trainersSnapshot = await trainersCollection.get();
+
+    const trainersData = trainersSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    res.json(trainersData);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch services' });
+  }
+});
