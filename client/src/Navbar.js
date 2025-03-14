@@ -42,7 +42,7 @@ export default function Navbar() {
                 ) : null}
 
                 {/* Show "Create Trainer" only for the specified email */}
-                {user?.email === "wgrimmer15@gmail.com" || user?.email === "esheiser@loyola.edu" && (
+                {user?.email === "wgrimmer15@gmail.com" && (
                     <CustomLink to="/admin-dashboard">ADMIN DASHBOARD</CustomLink>
                 )}
             </ul>
@@ -54,7 +54,7 @@ export default function Navbar() {
                             {user.email} 
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
-                            <Dropdown.Item href="/profile">Manage Profile</Dropdown.Item>
+                            <Dropdown.Item href="/manage-profile">Manage Profile</Dropdown.Item>
                             <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>

@@ -63,3 +63,14 @@ body {
     align-self: center;
     margin-top: 30px;
 }
+
+/* Modal centering fix */
+  
+.modal {
+display: flex !important;
+width: 500px;
+height: 90vh;
+margin-left: 40%;
+margin-top: 30px;
+
+}

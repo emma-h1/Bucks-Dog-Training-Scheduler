@@ -14,6 +14,7 @@ import OurTeam from './pages/OurTeam.js';
 import AdminDashboard from './pages/AdminDashboard.js';
 import ManageUsers from './pages/ManageUsers.js';
 import ManageTrainers from './pages/ManageTrainers.js';
+import ManageProfile from './pages/ManageProfile.js';
 import { Route, Routes, useNavigate } from "react-router-dom";
 import DecideShowNavbar from './DecideShowNavbar.js';
 import CreateTrainer from './pages/CreateTrainer.js';
@@ -37,7 +38,7 @@ const ProtectedRoute = ({ children }) => {
   }
 
   // If the user is the administrator, render the children (e.g., the CreateTrainer page)
-  return user?.email === "wpgrimmer15@gmail.com" ? children : null;
+  return user?.email === "wgrimmer15@gmail.com" ? children : null;
 };
 
 function App() {
@@ -66,6 +67,7 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/our-team" element={<OurTeam />} />
+          <Route path="/manage-profile" element={<ManageProfile />} />
 
           <Route 
             path="/manage-services" 
@@ -81,7 +83,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <ManageAppointments />
-              </ProtectedRoute>
+                </ProtectedRoute>
             } 
             />
           
@@ -115,9 +117,9 @@ function App() {
           <Route
             path="/admin-dashboard"
             element={
-              
+              <ProtectedRoute>
                 <AdminDashboard />
-              
+                </ProtectedRoute>
             }
           />
 

@@ -134,9 +134,9 @@ const ManageAppointments = () => {
         <Col key={appointment.id}>
         <div className="d-flex justify-content-between align-items-center p-3 bg-white border shadow-sm">
             <div>
-            <h5 className="mb-1 fw-bold">{appointment.dog} &emsp; | &emsp; {appointment.owner} </h5>
+            <h5 className="mb-1 fw-bold">{appointment.dog.name} &emsp; | &emsp; {appointment.owner.firstName} </h5>
             <p className="text-muted mb-1">
-                Date: {appointment.date}  &emsp;| &emsp;   Trainer: {appointment.trainer}  &emsp; |  &emsp; 
+                Date: {appointment.date}  &emsp;| &emsp;   Trainer: {appointment.trainer.firstName}  &emsp; |  &emsp; 
                 Location: {appointment.location}   &emsp; | &emsp;   Dropoff Time: {appointment.dropoffTime}    &emsp; | &emsp;  
                 Pickup Time: {appointment.pickupTime}    &emsp; | &emsp;   Balance Due: {appointment.balanceDue}
             </p>
