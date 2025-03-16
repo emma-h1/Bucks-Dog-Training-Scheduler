@@ -3,6 +3,7 @@ const admin = require("firebase-admin");
 const cors = require("cors");
 const { getFirestore } = require("firebase-admin/firestore");
 const nodemailer = require('nodemailer');
+const cron = require('node-cron');
 
 const app = express();
 app.use(cors());
@@ -219,7 +220,6 @@ app.post('/api/appointments', async (req, res) => {
     if (!dogDoc.exists) {
       throw new Error('Dog not found');
     }
-
     const dogName = dogDoc.data().name;
 
     // Send email confirmation
@@ -580,3 +580,79 @@ const sendEmailConfirmation = async (ownerEmail, appointmentDetails) => {
 
   await sendEmail(ownerEmail, 'Appointment Confirmation', html);
 };
+
+const sendEmailReminder = async (ownerEmail, appointmentDetails) => {
+  const { dogName, startTime, endTime, location, purpose } = appointmentDetails;
+
+  const html = `
+    <h1>Appointment Reminder</h1>
+    <p>This is a reminder for ${dogName}'s appointment today.</p>
+    <ul>
+      <li><strong>Start Time:</strong> ${startTime.toLocaleString()}</li>
+      <li><strong>End Time:</strong> ${endTime.toLocaleString()}</li>
+      <li><strong>Location:</strong> ${location}</li>
+      <li><strong>Purpose:</strong> ${purpose}</li>
+    </ul>
+    <p>We look forward to seeing you!</p>
+  `;
+
+  await sendEmail(ownerEmail, 'Appointment Reminder', html);
+};
+
+processReminders = async () => {
+  const today = new Date();
+  const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+  const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+
+  const appointmentsSnapshot = await db.collection('appointments')
+    .where('startTime', '>=', startOfDay)
+    .where('startTime', '<=', endOfDay)
+    .get();
+
+  const todaysAppointments = [];
+  appointmentsSnapshot.forEach((doc) => {
+    const data = doc.data();
+    todaysAppointments.push({
+      id: doc.id,
+      dog: data.dog,
+      owner: data.owner,
+      trainer: data.trainer,
+      startTime: parseFirebaseTimestamp(data.startTime), // Convert Firebase Timestamp to Date
+      endTime: parseFirebaseTimestamp(data.endTime), // Convert Firebase Timestamp to Date
+      location: data.location,
+      purpose: data.purpose,
+      balanceDue: data.balanceDue
+    });
+  });
+
+  if (todaysAppointments.length > 0) {
+      // Send reminder emails for each appointment
+      for (const appointment of todaysAppointments) {
+        // Fetch owner's email from the database
+      const ownerDoc = await db.collection('users').doc(appointment.owner).get();
+      if (!ownerDoc.exists) {
+        throw new Error('Owner not found');
+      }
+      const ownerEmail = ownerDoc.data().email;
+      
+      // Fetch dog's name from the databse
+      const dogDoc = await db.collection('dogs').doc(appointment.dog).get();
+      if (!dogDoc.exists) {
+        throw new Error('Dog not found');
+      }
+      const dogName = dogDoc.data().name;
+
+      await sendEmailReminder(ownerEmail, {
+        dogName,
+        startTime: appointment.startTime,
+        endTime: appointment.endTime,
+        location: appointment.location,
+        purpose: appointment.purpose
+      });
+    }
+  }
+}
+
+cron.schedule("0 8 * * *", processReminders);
+
+// processReminders();
