@@ -4,6 +4,7 @@ import { Container, Row, Col, Card, Button, Form, Modal, Alert } from 'react-boo
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Pencil, Plus, Save, ChevronRight, ChevronDown, Trash } from "react-bootstrap-icons";
 import { auth } from '../firebase';
+import { useNavigate } from 'react-router-dom';
 
 const ManageProfile = () => {
   const [profile, setProfile] = useState({
@@ -203,6 +204,13 @@ const ManageProfile = () => {
     }
   };
 
+  const navigate = useNavigate();
+  
+  const handleResetPassword = () => {
+    // Navigate to the reset password page
+    navigate('/reset-password');
+  };
+
   // Render field with arrow/chevron to toggle edit mode
   const renderField = (field, label) => {
     return (
@@ -263,10 +271,13 @@ const ManageProfile = () => {
                   {renderField('username', 'Username')}
                   {renderField('firstName', 'First Name')}
                   {renderField('lastName', 'Last Name')}
+                  <Button variant="secondary" onClick={handleResetPassword} className="align-center">
+                    Reset Password
+                  </Button>
                 </Col>
               </Row>
             </Card.Body>
-          </Card>
+            </Card>
         </Col>
 
         {/* Dogs Section */}

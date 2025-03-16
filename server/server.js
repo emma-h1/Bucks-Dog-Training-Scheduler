@@ -148,48 +148,89 @@ app.delete('/api/ServiceLibrary/:id', async (req, res) => {
   }
 });
 
-// Endpoint to fetch appointments
+// Helper function to parse Firebase timestamps
+const parseFirebaseTimestamp = (timestamp) => {
+  if (timestamp && timestamp.toDate) {
+    return timestamp.toDate(); // Convert Firebase Timestamp to JavaScript Date
+  }
+  return null;
+};
+
+// Helper function to format date for Firebase
+const formatDateForFirebase = (dateString) => {
+  if (!dateString) return null;
+  return new Date(dateString); // Convert ISO string to JavaScript Date
+};
+
+// GET all appointments
 app.get('/api/appointments', async (req, res) => {
   try {
-    console.log('Fetching appointments...');
-    const appointmentsCollection = db.collection('appointments');
-    const appointmentsSnapshot = await appointmentsCollection.get();
-    console.log('Number of documents:', appointmentsSnapshot.size);
-    const appointmentsData = appointmentsSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    res.json(appointmentsData);
-  } catch (err) {
+    const appointmentsSnapshot = await db.collection('appointments').get();
+    const appointments = [];
+    appointmentsSnapshot.forEach((doc) => {
+      const data = doc.data();
+      appointments.push({
+        id: doc.id,
+        dog: data.dog,
+        owner: data.owner,
+        trainer: data.trainer,
+        startTime: parseFirebaseTimestamp(data.startTime), // Convert Firebase Timestamp to Date
+        endTime: parseFirebaseTimestamp(data.endTime), // Convert Firebase Timestamp to Date
+        location: data.location,
+        purpose: data.purpose,
+        balanceDue: data.balanceDue
+      });
+    });
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
     res.status(500).json({ error: 'Failed to fetch appointments' });
   }
 });
 
-// create appointments
+// POST a new appointment
 app.post('/api/appointments', async (req, res) => {
   try {
-    const { dog, owner, trainer, date, location, dropoffTime, pickupTime, purpose, balanceDue } = req.body;
-    const newAppointment = await db.collection('appointments').add({
-      dog, owner, trainer, date, location, dropoffTime, pickupTime, purpose, balanceDue
-    });
-    res.status(201).json({ id: newAppointment.id });
+    const { dog, owner, trainer, startTime, endTime, location, purpose, balanceDue } = req.body;
+
+    const newAppointment = {
+      dog,
+      owner,
+      trainer,
+      startTime: formatDateForFirebase(startTime), // Convert ISO string to Date
+      endTime: formatDateForFirebase(endTime), // Convert ISO string to Date
+      location,
+      purpose,
+      balanceDue
+    };
+
+    const docRef = await db.collection('appointments').add(newAppointment);
+    res.status(201).json({ id: docRef.id, ...newAppointment });
   } catch (error) {
     console.error('Error creating appointment:', error);
     res.status(500).json({ error: 'Failed to create appointment' });
   }
 });
 
-// Update an appointment
+// PUT (update) an existing appointment
 app.put('/api/appointments/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { dog, owner, trainer, date, location, dropoffTime, pickupTime, purpose, balanceDue } = req.body;
-    
-    await db.collection('appointments').doc(id).update({
-      dog, owner, trainer, date, location, dropoffTime, pickupTime, purpose, balanceDue
-    });
-    
-    res.json({ message: 'appointment updated successfully' });
+    const { dog, owner, trainer, startTime, endTime, location, purpose, balanceDue } = req.body;
+
+    const updatedAppointment = {
+      dog,
+      owner,
+      trainer,
+      startTime: formatDateForFirebase(startTime), // Convert ISO string to Date
+      endTime: formatDateForFirebase(endTime), // Convert ISO string to Date
+      location,
+      purpose,
+      balanceDue
+    };
+
+    await db.collection('appointments').doc(id).update(updatedAppointment);
+    res.status(200).json({ id, ...updatedAppointment });
   } catch (error) {
     console.error('Error updating appointment:', error);
     res.status(500).json({ error: 'Failed to update appointment' });
@@ -355,21 +396,29 @@ app.delete('/api/dogs/:id', async (req, res) => {
   }
 });
 
-// Endpoint to get dogs by ownerID
+// Endpoint to get dogs (all or by ownerID)
 app.get('/api/dogs', async (req, res) => {
-  const ownerID = req.query.ownerID; // Get ownerID from query parameter
+  const ownerID = req.query.ownerID; // Get ownerID from query parameter (optional)
 
   try {
-    // Query Firestore for dogs where ownerID matches
+    // Query Firestore for dogs
     const dogsRef = db.collection('dogs');
-    const querySnapshot = await dogsRef.where('ownerID', '==', ownerID).get();
+    let querySnapshot;
+    
+    if (ownerID) {
+      // If ownerID is provided, filter dogs by owner
+      querySnapshot = await dogsRef.where('ownerID', '==', ownerID).get();
+    } else {
+      // If no ownerID, get all dogs
+      querySnapshot = await dogsRef.get();
+    }
 
     const dogs = [];
     querySnapshot.forEach((doc) => {
       dogs.push({ id: doc.id, ...doc.data() }); // Include document ID and data
     });
 
-    res.json(dogs); // Return the filtered dogs
+    res.json(dogs); // Return the dogs
   } catch (err) {
     console.error('Failed to fetch dogs:', err);
     res.status(500).json({ error: 'Failed to fetch dogs' });
