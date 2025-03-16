@@ -2,6 +2,7 @@ const express = require("express");
 const admin = require("firebase-admin");
 const cors = require("cors");
 const { getFirestore } = require("firebase-admin/firestore");
+const nodemailer = require('nodemailer');
 
 const app = express();
 app.use(cors());
@@ -205,7 +206,32 @@ app.post('/api/appointments', async (req, res) => {
     };
 
     const docRef = await db.collection('appointments').add(newAppointment);
+
+    // Fetch owner's email from the database
+    const ownerDoc = await db.collection('users').doc(owner).get();
+    if (!ownerDoc.exists) {
+      throw new Error('Owner not found');
+    }
+    const ownerEmail = ownerDoc.data().email;
+    
+    // Fetch dog's name from the databse
+    const dogDoc = await db.collection('dogs').doc(dog).get();
+    if (!dogDoc.exists) {
+      throw new Error('Dog not found');
+    }
+
+    const dogName = dogDoc.data().name;
+
+    // Send email confirmation
+    await sendEmailConfirmation(ownerEmail, {
+      dogName: dogName,
+      startTime: new Date(startTime),
+      endTime: new Date(endTime),
+      location,
+      purpose
+    });
     res.status(201).json({ id: docRef.id, ...newAppointment });
+
   } catch (error) {
     console.error('Error creating appointment:', error);
     res.status(500).json({ error: 'Failed to create appointment' });
@@ -507,3 +533,50 @@ app.get('/api/users', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch users' });
   }
 });
+
+const transporter = nodemailer.createTransport({
+  host: 'smtp.ethereal.email',
+  port: 587,
+  auth: {
+      user: 'christa.kohler76@ethereal.email',
+      pass: 'xX199MdYcUaHdEUB8w'
+  }
+});
+
+const sendEmail = async (to, subject, html) => {
+  const mailInfo = {
+    from: '"Bucks Dog Training" <christa.kohler76@ethereal.email>',
+    to,
+    subject,
+    html
+  }
+
+  transporter.sendMail(mailInfo, (err, info) => {
+    if (err) {
+        console.log('Error occurred. ' + err.message);
+        return process.exit(1);
+    }
+
+    console.log('Message sent: %s', info.messageId);
+    // Preview only available when sending through an Ethereal account
+    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  });
+}
+
+const sendEmailConfirmation = async (ownerEmail, appointmentDetails) => {
+  const { dogName, startTime, endTime, location, purpose } = appointmentDetails;
+
+  const html = `
+    <h1>Appointment Confirmation</h1>
+    <p>Your appointment for ${dogName} has been successfully scheduled.</p>
+    <ul>
+      <li><strong>Start Time:</strong> ${startTime.toLocaleString()}</li>
+      <li><strong>End Time:</strong> ${endTime.toLocaleString()}</li>
+      <li><strong>Location:</strong> ${location}</li>
+      <li><strong>Purpose:</strong> ${purpose}</li>
+    </ul>
+    <p>Thank you for choosing our service!</p>
+  `;
+
+  await sendEmail(ownerEmail, 'Appointment Confirmation', html);
+};
