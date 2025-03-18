@@ -34,11 +34,16 @@ export default function Navbar() {
                 <CustomLink to="/">HOME</CustomLink>
                 <CustomLink to="/about">ABOUT</CustomLink>
                 <CustomLink to="/services">SERVICES</CustomLink>  
+                <CustomLink to="/our-team">OUR TEAM</CustomLink> 
                 <CustomLink to="/contact">CONTACT</CustomLink>
+
+                {user ? (
+                    <CustomLink to="/calendar">APPOINTMENTS</CustomLink>
+                ) : null}
 
                 {/* Show "Create Trainer" only for the specified email */}
                 {user?.email === "wgrimmer15@gmail.com" && (
-                    <CustomLink to="/create-trainer">CREATE TRAINER</CustomLink>
+                    <CustomLink to="/admin-dashboard">ADMIN DASHBOARD</CustomLink>
                 )}
             </ul>
 
@@ -49,7 +54,7 @@ export default function Navbar() {
                             {user.email} 
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
-                            <Dropdown.Item href="/profile">Manage Profile</Dropdown.Item>
+                            <Dropdown.Item href="/manage-profile">Manage Profile</Dropdown.Item>
                             <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>

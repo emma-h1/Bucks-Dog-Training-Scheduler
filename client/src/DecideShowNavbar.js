@@ -8,7 +8,7 @@ const DecideShowNavbar = ({ children }) => {
 
     useEffect(() => {
         console.log('location: ', location)
-        if(location.pathname === "/reset-password"
+        if(location.pathname === ""
         ) {
             setShowNavbar(false)
         } else {

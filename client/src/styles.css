@@ -22,7 +22,7 @@ body {
     margin: 0;
     list-style: none;
     display: flex;
-    gap: 1rem;
+    gap: 3rem;
 }
 
 .nav a {
@@ -34,11 +34,11 @@ body {
 }
 
 .nav li.active {
-    background-color: teal;
+    background-color: rgb(50, 79, 92);
 }
 
 .nav li:hover {
-    background-color: darkgrey;
+    background-color: rgb(42, 51, 110);
 }
 
 .logo {
@@ -62,4 +62,15 @@ body {
     background-color: #4bbcc9 !important;
     align-self: center;
     margin-top: 30px;
+}
+
+/* Modal centering fix */
+  
+.modal {
+display: flex !important;
+width: 500px;
+height: 90vh;
+margin-left: 40%;
+margin-top: 30px;
+
 }
