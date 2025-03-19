@@ -27,7 +27,7 @@ const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && user?.email !== "wgrimmer15@gmail.com" || user?.email !== "esheiser@loyola.edu") {
+    if (!loading && user?.email !== "wgrimmer15@gmail.com" && user?.email !== "esheiser@loyola.edu") {
       // If the user is not the administrator, redirect to the home page
       navigate("/");
     }

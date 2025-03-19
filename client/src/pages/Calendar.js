@@ -1,69 +1,51 @@
-import React, { useState } from 'react'
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import React, { useEffect, useState } from 'react';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from "@fullcalendar/interaction"
+import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-import { auth } from '../firebase'
+import axios from 'axios';
+
+import "./calendar.css"; // Import CSS for event styling
 
 export default function Calendar() {
-    // Variables for adding event
-    const [title, setTitle] = useState("")
-    const [event, setEvent] = useState({})
-
-
-    // Add event popup
-    const [open, setOpen] = useState(false);
-
-    // Delete event popup
-    const [openDelete, setOpenDelete] = useState(false);
-
-    // Info popup
+    // State to store fetched events
+    const [events, setEvents] = useState([]);
     const [openInfo, setOpenInfo] = useState(false);
 
-    const handleClickOpen = (arg) => {
-        // Open popup
-        setOpen(true);
-        console.log(arg)
-        setEvent(arg)
-        console.log(event)
-    };
+    useEffect(() => {
+        // Fetch appointments from the backend
+        const fetchAppointments = async () => {
+            try {
+                const response = await axios.get('/api/appointments');
+                const fetchedEvents = response.data.map(appointment => ({
+                    id: appointment.id,
+                    title: `Trainer: ${appointment.trainer} - Dog: ${appointment.dog}`, 
+                    start: new Date(appointment.startTime), // Convert to Date
+                    end: new Date(appointment.endTime), // Convert to Date
+                    extendedProps: {
+                        owner: appointment.owner,
+                        location: appointment.location,
+                        purpose: appointment.purpose,
+                        balanceDue: appointment.balanceDue
+                    }
+                }));
+                setEvents(fetchedEvents);
+            } catch (error) {
+                console.error("Error fetching appointments:", error);
+            }
+        };
 
-    // Close add popup
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    // Clode delete popup
-    const handleCloseDelete = () => {
-        setOpenDelete(false);
-    };
-
-    const handleCloseInfo = () => {
-        setOpenInfo(false);
-    };
-
-
-
-    const handleDateClick = (arg) => {
-        handleClickOpen(arg)
-    }
-
-
-    const handleEventClick = (arg) => {
-        setOpenDelete(true)
-        setEvent(arg)
-    }
-
+        fetchAppointments();
+    }, []);
 
     return (
         <div className="m-3 p-4 bg-white">
@@ -74,29 +56,30 @@ export default function Calendar() {
                 }}
                 plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin]}
                 initialView="dayGridMonth"
-                dateClick={handleDateClick}
-
-                weekends={true}
-                editable
-                eventClick={handleEventClick}
+                events={events} // Use fetched events
                 slotMinTime="06:00:00"
                 slotMaxTime="18:00:00"
                 height="750px"
                 nowIndicator={true}
+                eventContent={(arg) => (
+                    <div className="fc-event-content">
+                        <div>{arg.event.title}</div>
+                    </div>
+                )}
+                
+                
             />
-            <div>
-                <Dialog open={openInfo}>
-                    <DialogTitle>Info</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            You don't own this event!
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseInfo}>Ok</Button>
-                    </DialogActions>
-                </Dialog>
-            </div>
+            <Dialog open={openInfo}>
+                <DialogTitle>Info</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        You don't own this event!
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenInfo(false)}>Ok</Button>
+                </DialogActions>
+            </Dialog>
         </div>
-    )
+    );
 }
