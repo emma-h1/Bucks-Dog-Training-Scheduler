@@ -6,7 +6,7 @@ This project requires Node.js to run. Make sure Node.js is installed before cont
 
 ### Running
 
-To run this project, open terminal and in the 'server' folder, run `npm run dev`. Open a second terminal. In the second terminal, go to the 'client' folder and run `npm start`.
+To run this project, open terminal and `npm install`. In the 'server' folder, run `npm run dev`. Open a second terminal. In the second terminal, go to the 'client' folder and run `npm start`.
 
 ### Coverage Testing
 
