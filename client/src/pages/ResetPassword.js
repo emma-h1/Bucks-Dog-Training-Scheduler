@@ -20,7 +20,7 @@ export default function ResetPassword() {
         alert("Email sent.")
     })
     .catch((error) => {
-        setError = "Cannot send email";
+        setError("Cannot send email");
     });
   };
 

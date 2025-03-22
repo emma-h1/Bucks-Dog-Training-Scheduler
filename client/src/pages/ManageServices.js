@@ -89,7 +89,7 @@ const ManageServices = () => {
       {/* Header with Add Button */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Manage Services</h1>
-        <Button variant="primary" onClick={() => handleShowModal()}>
+        <Button variant="primary" className="addService" onClick={() => handleShowModal()}>
           <Plus size={20} /> Add New Service
         </Button>
       </div>
@@ -138,20 +138,22 @@ const ManageServices = () => {
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>Service Name</Form.Label>
+              <Form.Label htmlFor="serviceName">Service Name</Form.Label>
               <Form.Control
                 type="text"
                 name="name"
+                id="serviceName"
                 value={formData.name}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Description</Form.Label>
+              <Form.Label htmlFor="description">Description</Form.Label>
               <Form.Control
                 as="textarea"
                 name="description"
+                id="description"
                 value={formData.description}
                 onChange={handleInputChange}
                 required
@@ -159,10 +161,11 @@ const ManageServices = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Price</Form.Label>
+              <Form.Label htmlFor="price">Price</Form.Label>
               <Form.Control
                 as="textarea"
                 name="price"
+                id="price"
                 value={formData.price}
                 onChange={handleInputChange}
                 required

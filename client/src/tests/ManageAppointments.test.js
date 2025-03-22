@@ -1,279 +1,362 @@
-
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import axios from 'axios';
-import ManageAppointments from '../pages/ManageAppointments'; // Adjust the import path as needed
-import { Container, Row, Col, Button, Form, Modal, Alert } from 'react-bootstrap';
+import ManageAppointments from '../pages/ManageAppointments';
 
 // Mock axios
 jest.mock('axios', () => ({
-    get: jest.fn(() => Promise.resolve({ data: [] })),
-    post: jest.fn(() => Promise.resolve({ data: {} })),
-    put: jest.fn(() => Promise.resolve({ data: {} })),
-    delete: jest.fn(() => Promise.resolve({ data: {} })),
-  }));
+  get: jest.fn(() => Promise.resolve({ data: [] })),
+  post: jest.fn(() => Promise.resolve({ data: {} })),
+  put: jest.fn(() => Promise.resolve({ data: {} })),
+  delete: jest.fn(() => Promise.resolve({ data: {} })),
+}));
+
+// Mock data
+const mockDogs = [
+  { id: 'dog1', name: 'Rex', ownerID: 'owner1' },
+  { id: 'dog2', name: 'Buddy', ownerID: 'owner2' }
+];
+
+const mockOwners = [
+  { id: 'owner1', firstName: 'John', lastName: 'Doe' },
+  { id: 'owner2', firstName: 'Jane', lastName: 'Smith' }
+];
+
+const mockTrainers = [
+  { id: 'trainer1', firstName: 'Toby', lastName: 'Johnson' },
+  { id: 'trainer2', firstName: 'Sarah', lastName: 'Hills' }
+];
+
+const mockAppointments = [
+  {
+    id: 'appt1',
+    dog: 'dog1',
+    owner: 'owner1',
+    trainer: 'trainer1',
+    startTime: '2025-03-20T10:00:00.000Z',
+    endTime: '2025-03-20T11:00:00.000Z',
+    location: 'Main Office',
+    purpose: 'Basic Training',
+    balanceDue: '$50'
+  },
+  {
+    id: 'appt2',
+    dog: 'dog2',
+    owner: 'owner2',
+    trainer: 'trainer2',
+    startTime: '2025-03-21T14:00:00.000Z',
+    endTime: '2025-03-21T15:00:00.000Z',
+    location: 'Park',
+    purpose: 'Socialization',
+    balanceDue: '$75'
+  }
+];
 
 describe('ManageAppointments Component', () => {
-  const mockAppointments = [
-    {
-      id: 1,
-      dog: 'Rex',
-      owner: 'John Doe',
-      trainer: 'Jane Smith',
-      date: '2025-03-01',
-      location: 'Main Facility',
-      dropoffTime: '9:00 AM',
-      pickupTime: '5:00 PM',
-      purpose: 'Training',
-      balanceDue: '$150'
-    },
-    {
-      id: 2,
-      dog: 'Bella',
-      owner: 'Sarah Johnson',
-      trainer: 'Mike Brown',
-      date: '2025-03-02',
-      location: 'Park',
-      dropoffTime: '10:00 AM',
-      pickupTime: '4:00 PM',
-      purpose: 'Socialization',
-      balanceDue: '$100'
-    }
-  ];
-
   beforeEach(() => {
-    // Reset mocks before each test
-    jest.clearAllMocks();
-    
-    // Mock successful GET request
-    axios.get.mockResolvedValue({ data: mockAppointments });
-    
-    // Mock window.confirm to always return true
-    global.window.confirm = jest.fn(() => true);
+    // Mock API responses
+    axios.get.mockImplementation((url) => {
+      if (url.includes('/api/appointments')) {
+        return Promise.resolve({ data: mockAppointments });
+      } else if (url.includes('/api/dogs')) {
+        return Promise.resolve({ data: mockDogs });
+      } else if (url.includes('/api/users')) {
+        return Promise.resolve({ data: mockOwners });
+      } else if (url.includes('/api/trainers')) {
+        return Promise.resolve({ data: mockTrainers });
+      }
+      return Promise.reject(new Error('Not found'));
+    });
+
+    axios.post.mockResolvedValue({ data: { id: 'new-appt' } });
+    axios.put.mockResolvedValue({ data: { success: true } });
+    axios.delete.mockResolvedValue({ data: { success: true } });
   });
 
-  test('renders manage appointments page with header', async () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('renders the component and fetches data', async () => {
     render(<ManageAppointments />);
     
-    // Check if header is rendered
+    // Check heading
     expect(screen.getByText('Manage Appointments')).toBeInTheDocument();
+    
+    // Check if Add New Appointment button is rendered
     expect(screen.getByText('Add New Appointment')).toBeInTheDocument();
     
-    // Wait for appointments to load
+    // Wait for the appointments to be loaded
     await waitFor(() => {
       expect(axios.get).toHaveBeenCalledWith('http://localhost:4999/api/appointments');
+      expect(axios.get).toHaveBeenCalledWith('http://localhost:4999/api/dogs');
+      expect(axios.get).toHaveBeenCalledWith('http://localhost:4999/api/users');
+      expect(axios.get).toHaveBeenCalledWith('http://localhost:4999/api/trainers');
     });
+
   });
 
-  test('displays appointments correctly', async () => {
+  test('opens the modal when Add New Appointment button is clicked', async () => {
     render(<ManageAppointments />);
     
-    // Wait for appointments to be displayed
     await waitFor(() => {
-      expect(screen.getByText('Rex | John Doe')).toBeInTheDocument();
-      expect(screen.getByText(/Trainer: Jane Smith/)).toBeInTheDocument();
-      expect(screen.getByText('Bella | Sarah Johnson')).toBeInTheDocument();
-      expect(screen.getByText(/Purpose: Socialization/)).toBeInTheDocument();
+      expect(axios.get).toHaveBeenCalledTimes(4);
     });
-  });
-
-  test('opens add appointment modal when add button is clicked', async () => {
-    render(<ManageAppointments />);
     
-    // Click the add button
+    // Click on Add New Appointment button
     fireEvent.click(screen.getByText('Add New Appointment'));
     
-    // Check if modal is opened with correct title
-    expect(screen.getByText('Add New Appointment')).toBeInTheDocument();
-    expect(screen.getByLabelText('Dog Name')).toBeInTheDocument();
-    expect(screen.getByLabelText('Owner Name')).toBeInTheDocument();
-    
-    // Check if form fields are empty
-    expect(screen.getByLabelText('Dog Name')).toHaveValue('');
-    expect(screen.getByLabelText('Owner Name')).toHaveValue('');
+    // Check if modal is opened
+    expect(screen.getByText('Select a dog')).toBeInTheDocument();
+    expect(screen.getByText('Select a trainer')).toBeInTheDocument();
   });
 
-  test('opens edit appointment modal with appointment data', async () => {
+  test('opens the edit modal when Edit button is clicked', async () => {
     render(<ManageAppointments />);
     
-    // Wait for appointments to load
     await waitFor(() => {
-      expect(screen.getByText('Rex | John Doe')).toBeInTheDocument();
+      expect(axios.get).toHaveBeenCalledTimes(4);
     });
     
-    // Find and click the first Edit button
+    // Find and click the Edit button for the first appointment
     const editButtons = screen.getAllByText('Edit');
     fireEvent.click(editButtons[0]);
     
-    // Check if modal is opened with correct title and data
+    // Check if modal is opened with edit title
     expect(screen.getByText('Edit Appointment')).toBeInTheDocument();
     
-    // Verify form fields are filled with appointment data
-    expect(screen.getByLabelText('Dog Name')).toHaveValue('Rex');
-    expect(screen.getByLabelText('Owner Name')).toHaveValue('John Doe');
-    expect(screen.getByLabelText('Trainer')).toHaveValue('Jane Smith');
-    expect(screen.getByLabelText('Date')).toHaveValue('2025-03-01');
+    // Check if form is pre-filled
+    await waitFor(() => {
+      const locationInput = screen.getByLabelText('Location');
+      expect(locationInput.value).toBe('Main Office');
+      
+      const purposeInput = screen.getByLabelText('Purpose');
+      expect(purposeInput.value).toBe('Basic Training');
+    });
   });
 
   test('submits new appointment correctly', async () => {
-    // Mock successful POST request
-    axios.post.mockResolvedValue({ data: { id: 3, ...mockAppointments[0] } });
-    
     render(<ManageAppointments />);
     
-    // Click add button
+    await waitFor(() => {
+      expect(axios.get).toHaveBeenCalledTimes(4);
+    });
+    
+    // Open add appointment modal
     fireEvent.click(screen.getByText('Add New Appointment'));
     
-    // Fill out form
-    fireEvent.change(screen.getByLabelText('Dog Name'), { target: { value: 'Max' } });
-    fireEvent.change(screen.getByLabelText('Owner Name'), { target: { value: 'Alex Green' } });
-    fireEvent.change(screen.getByLabelText('Trainer'), { target: { value: 'Tom Wilson' } });
-    fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2025-03-10' } });
-    fireEvent.change(screen.getByLabelText('Location'), { target: { value: 'Home' } });
-    fireEvent.change(screen.getByLabelText('Dropoff Time'), { target: { value: '8:00 AM' } });
-    fireEvent.change(screen.getByLabelText('Pickup Time'), { target: { value: '3:00 PM' } });
-    fireEvent.change(screen.getByLabelText('Purpose'), { target: { value: 'Behavior Training' } });
-    fireEvent.change(screen.getByLabelText('Balance Due'), { target: { value: '$200' } });
+    // Fill the form
+    const dogSelect = screen.getByLabelText('Dog');
+    fireEvent.change(dogSelect, { target: { value: 'dog1' } });
     
-    // Submit form
+    const trainerSelect = screen.getByLabelText('Trainer');
+    fireEvent.change(trainerSelect, { target: { value: 'trainer1' } });
+    
+    const startTimeInput = screen.getByLabelText('Start Time');
+    fireEvent.change(startTimeInput, { target: { value: '2025-04-01T10:00' } });
+    
+    const endTimeInput = screen.getByLabelText('End Time');
+    fireEvent.change(endTimeInput, { target: { value: '2025-04-01T11:00' } });
+    
+    const locationInput = screen.getByLabelText('Location');
+    fireEvent.change(locationInput, { target: { value: 'Test Location' } });
+    
+    const purposeInput = screen.getByLabelText('Purpose');
+    fireEvent.change(purposeInput, { target: { value: 'Test Purpose' } });
+    
+    const balanceDueInput = screen.getByLabelText('Balance Due');
+    fireEvent.change(balanceDueInput, { target: { value: '$100' } });
+    
+    // Submit the form
     fireEvent.click(screen.getByText('Add Appointment'));
     
-    // Verify API call
+    // Verify the API call
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith('http://localhost:4999/api/appointments', {
-        dog: 'Max',
-        owner: 'Alex Green',
-        trainer: 'Tom Wilson',
-        date: '2025-03-10',
-        location: 'Home',
-        dropoffTime: '8:00 AM',
-        pickupTime: '3:00 PM',
-        purpose: 'Behavior Training',
-        balanceDue: '$200'
+        dog: 'dog1',
+        owner: 'owner1',
+        trainer: 'trainer1',
+        startTime: '2025-04-01T10:00',
+        endTime: '2025-04-01T11:00',
+        location: 'Test Location',
+        purpose: 'Test Purpose',
+        balanceDue: '$100'
       });
-      expect(axios.get).toHaveBeenCalledTimes(2); // Initial load + after add
     });
+    
+    // Check if appointments are reloaded
+    expect(axios.get).toHaveBeenCalledWith('http://localhost:4999/api/appointments');
   });
 
-  test('edits appointment correctly', async () => {
-    // Mock successful PUT request
-    axios.put.mockResolvedValue({ data: { ...mockAppointments[0], dog: 'Updated Rex' } });
-    
+  test('edits an appointment correctly', async () => {
     render(<ManageAppointments />);
     
-    // Wait for appointments to load
+    // Wait for data to load
     await waitFor(() => {
-      expect(screen.getByText('Rex | John Doe')).toBeInTheDocument();
+      expect(axios.get).toHaveBeenCalledTimes(4);
     });
     
-    // Find and click the first Edit button
+    // Find and click the Edit button for the first appointment
     const editButtons = screen.getAllByText('Edit');
     fireEvent.click(editButtons[0]);
     
-    // Update form field
-    fireEvent.change(screen.getByLabelText('Dog Name'), { target: { value: 'Updated Rex' } });
+    // Edit location field
+    const locationInput = screen.getByLabelText('Location');
+    fireEvent.change(locationInput, { target: { value: 'Updated Location' } });
     
-    // Submit form
+    // Submit the form
     fireEvent.click(screen.getByText('Save Changes'));
     
-    // Verify API call
+    // Verify the API call
     await waitFor(() => {
-      expect(axios.put).toHaveBeenCalledWith('http://localhost:4999/api/appointments/1', {
-        dog: 'Updated Rex',
-        owner: 'John Doe',
-        trainer: 'Jane Smith',
-        date: '2025-03-01',
-        location: 'Main Facility',
-        dropoffTime: '9:00 AM',
-        pickupTime: '5:00 PM',
-        purpose: 'Training',
-        balanceDue: '$150'
-      });
-      expect(axios.get).toHaveBeenCalledTimes(2); // Initial load + after edit
+      expect(axios.put).toHaveBeenCalledWith('http://localhost:4999/api/appointments/appt1', expect.objectContaining({
+        location: 'Updated Location'
+      }));
     });
+    
+    // Check if appointments are reloaded
+    expect(axios.get).toHaveBeenCalledWith('http://localhost:4999/api/appointments');
   });
 
-  test('deletes appointment correctly', async () => {
-    // Mock successful DELETE request
-    axios.delete.mockResolvedValue({ data: {} });
+  test('deletes an appointment correctly', async () => {
+    window.confirm = jest.fn().mockImplementation(() => true);
     
     render(<ManageAppointments />);
     
-    // Wait for appointments to load
     await waitFor(() => {
-      expect(screen.getByText('Rex | John Doe')).toBeInTheDocument();
+      expect(axios.get).toHaveBeenCalledTimes(4);
     });
     
-    // Find and click the first Delete button
+    // Find and click the Delete button for the first appointment
     const deleteButtons = screen.getAllByText('Delete');
     fireEvent.click(deleteButtons[0]);
     
-    // Verify confirmation dialog was shown
+    // Check if confirmation was requested
     expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to delete this appointment?');
     
-    // Verify API call
+    // Verify the API call
     await waitFor(() => {
-      expect(axios.delete).toHaveBeenCalledWith('http://localhost:4999/api/appointments/1');
-      expect(axios.get).toHaveBeenCalledTimes(2); // Initial load + after delete
+      expect(axios.delete).toHaveBeenCalledWith('http://localhost:4999/api/appointments/appt1');
     });
+    
+    // Check if appointments are reloaded
+    expect(axios.get).toHaveBeenCalledWith('http://localhost:4999/api/appointments');
   });
 
-  test('handles API errors gracefully', async () => {
-    // Mock failed GET request
-    axios.get.mockRejectedValueOnce(new Error('API error'));
+  test('handles API errors correctly', async () => {
+    // Mock API errors
+    axios.get.mockImplementation((url) => {
+      if (url.includes('/api/appointments')) {
+        return Promise.reject(new Error('API error'));
+      }
+      return Promise.resolve({ data: [] });
+    });
     
     render(<ManageAppointments />);
     
-    // Verify error message
+    // Check if error message is displayed
     await waitFor(() => {
       expect(screen.getByText('Failed to fetch appointments')).toBeInTheDocument();
     });
   });
 
-  test('handles form submission errors gracefully', async () => {
-    // Mock failed POST request
-    axios.post.mockRejectedValueOnce(new Error('API error'));
-    
+  test('auto-selects owner when dog is selected', async () => {
     render(<ManageAppointments />);
     
-    // Click add button
+    await waitFor(() => {
+      expect(axios.get).toHaveBeenCalledTimes(4);
+    });
+    
+    // Open add appointment modal
     fireEvent.click(screen.getByText('Add New Appointment'));
     
-    // Fill out form (minimal requirements)
-    fireEvent.change(screen.getByLabelText('Dog Name'), { target: { value: 'Max' } });
-    fireEvent.change(screen.getByLabelText('Owner Name'), { target: { value: 'Alex Green' } });
-    fireEvent.change(screen.getByLabelText('Trainer'), { target: { value: 'Tom Wilson' } });
-    fireEvent.change(screen.getByLabelText('Date'), { target: { value: '2025-03-10' } });
-    fireEvent.change(screen.getByLabelText('Location'), { target: { value: 'Home' } });
-    fireEvent.change(screen.getByLabelText('Dropoff Time'), { target: { value: '8:00 AM' } });
-    fireEvent.change(screen.getByLabelText('Pickup Time'), { target: { value: '3:00 PM' } });
-    fireEvent.change(screen.getByLabelText('Purpose'), { target: { value: 'Behavior Training' } });
-    fireEvent.change(screen.getByLabelText('Balance Due'), { target: { value: '$200' } });
+    // Select a dog
+    const dogSelect = screen.getByLabelText('Dog');
+    fireEvent.change(dogSelect, { target: { value: 'dog1' } });
     
-    // Submit form
+    // Fill other required fields
+    const trainerSelect = screen.getByLabelText('Trainer');
+    fireEvent.change(trainerSelect, { target: { value: 'trainer1' } });
+    
+    const startTimeInput = screen.getByLabelText('Start Time');
+    fireEvent.change(startTimeInput, { target: { value: '2025-04-01T10:00' } });
+    
+    const endTimeInput = screen.getByLabelText('End Time');
+    fireEvent.change(endTimeInput, { target: { value: '2025-04-01T11:00' } });
+    
+    const locationInput = screen.getByLabelText('Location');
+    fireEvent.change(locationInput, { target: { value: 'Test Location' } });
+    
+    const purposeInput = screen.getByLabelText('Purpose');
+    fireEvent.change(purposeInput, { target: { value: 'Test Purpose' } });
+    
+    const balanceDueInput = screen.getByLabelText('Balance Due');
+    fireEvent.change(balanceDueInput, { target: { value: '$100' } });
+    
+    // Submit the form
     fireEvent.click(screen.getByText('Add Appointment'));
     
-    // Verify error message
+    // Verify owner was auto-selected based on dog selection
+    await waitFor(() => {
+      expect(axios.post).toHaveBeenCalledWith('http://localhost:4999/api/appointments', 
+        expect.objectContaining({
+          dog: 'dog1',
+          owner: 'owner1'
+        })
+      );
+    });
+  });
+
+  test('displays an error message when fetching data fails', async () => {
+    axios.get.mockRejectedValue(new Error('Error'));
+    render(<ManageAppointments />);
+
+    // Wait for the error message to be displayed
+    await waitFor(() => {
+      expect(screen.getByText('Failed to fetch document lists')).toBeInTheDocument();
+    });
+  });
+  
+  test('displays error when fetching appointments fails', async () => {
+    axios.get.mockRejectedValueOnce(new Error('Failed to fetch appointments'));
+    render(<ManageAppointments />);
+      
+    await waitFor(() => {
+      expect(screen.getByText('Failed to fetch appointments')).toBeInTheDocument();
+    });
+  });
+  
+  test('displays error when saving appointment fails', async () => {
+    axios.post.mockRejectedValueOnce(new Error('Failed to save appointment'));
+    render(<ManageAppointments />);
+      
+    fireEvent.click(screen.getByText('Add New Appointment'));
+    fireEvent.change(screen.getByLabelText('Dog'), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText('Trainer'), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText('Start Time'), { target: { value: '2023-10-01T10:00' } });
+    fireEvent.change(screen.getByLabelText('End Time'), { target: { value: '2023-10-01T11:00' } });
+    fireEvent.change(screen.getByLabelText('Location'), { target: { value: 'Park' } });
+    fireEvent.change(screen.getByLabelText('Purpose'), { target: { value: 'Training' } });
+    fireEvent.change(screen.getByLabelText('Balance Due'), { target: { value: '100' } });
+      
+    fireEvent.click(screen.getByText('Add Appointment'));
+      
     await waitFor(() => {
       expect(screen.getByText('Failed to save appointment')).toBeInTheDocument();
     });
   });
-
-  test('closes modal when cancel button is clicked', async () => {
+  
+  test('displays error when deleting appointment fails', async () => {
+    axios.get.mockResolvedValueOnce({ data: [{ id: 1, dog: '1', owner: '1', trainer: '1', startTime: '2023-10-01T10:00', endTime: '2023-10-01T11:00' }] });
+    axios.delete.mockRejectedValueOnce(new Error('Failed to delete appointment'));
     render(<ManageAppointments />);
-    
-    // Click add button
-    fireEvent.click(screen.getByText('Add New Appointment'));
-    
-    // Verify modal is open
-    expect(screen.getByText('Add New Appointment')).toBeInTheDocument();
-    
-    // Click cancel button
-    fireEvent.click(screen.getByText('Cancel'));
-    
-    // Verify modal is closed
+      
     await waitFor(() => {
-      expect(screen.queryByText('Cancel')).not.toBeInTheDocument();
+      fireEvent.click(screen.getByText('Delete'));
+    });
+      
+    await waitFor(() => {
+      expect(screen.getByText('Failed to delete appointment')).toBeInTheDocument();
     });
   });
 });

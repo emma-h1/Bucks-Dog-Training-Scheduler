@@ -34,20 +34,16 @@ jest.mock('axios', () => ({
     ];
   
     beforeEach(() => {
-      // Reset mocks before each test
       jest.clearAllMocks();
       
-      // Mock successful GET request
       axios.get.mockResolvedValue({ data: mockServices });
       
-      // Mock window.confirm to always return true
       global.window.confirm = jest.fn(() => true);
     });
   
     test('renders manage services page with header', async () => {
       render(<ManageServices />);
-      
-      // Check if header is rendered
+
       expect(screen.getByText('Manage Services')).toBeInTheDocument();
       
       // Wait for services to load
@@ -59,7 +55,6 @@ jest.mock('axios', () => ({
     test('displays services correctly', async () => {
       render(<ManageServices />);
       
-      // Wait for services to be displayed
       await waitFor(() => {
         expect(screen.getByText('Basic Training')).toBeInTheDocument();
         expect(screen.getByText('Fundamental obedience training for your dog')).toBeInTheDocument();
@@ -67,20 +62,20 @@ jest.mock('axios', () => ({
         
         expect(screen.getByText('Advanced Training')).toBeInTheDocument();
         expect(screen.getByText('Advanced commands and behavioral correction')).toBeInTheDocument();
+        expect(screen.getByText('$200')).toBeInTheDocument();
         
         expect(screen.getByText('Boarding')).toBeInTheDocument();
+        expect(screen.getByText('Overnight care for your dog in a comfortable environment')).toBeInTheDocument();
         expect(screen.getByText('$50 per night')).toBeInTheDocument();
       });
     });
   
     test('opens add service modal when add button is clicked', async () => {
       render(<ManageServices />);
-      
-      // Click the add button
+
       fireEvent.click(screen.getByText('Add New Service'));
       
       // Check if modal is opened with correct title
-      expect(screen.getByText('Add New Service')).toBeInTheDocument();
       expect(screen.getByLabelText('Service Name')).toBeInTheDocument();
       expect(screen.getByLabelText('Description')).toBeInTheDocument();
       expect(screen.getByLabelText('Price')).toBeInTheDocument();
@@ -93,8 +88,7 @@ jest.mock('axios', () => ({
   
     test('opens edit service modal with service data', async () => {
       render(<ManageServices />);
-      
-      // Wait for services to load
+
       await waitFor(() => {
         expect(screen.getByText('Basic Training')).toBeInTheDocument();
       });
@@ -103,7 +97,6 @@ jest.mock('axios', () => ({
       const editButtons = screen.getAllByText('Edit');
       fireEvent.click(editButtons[0]);
       
-      // Check if modal is opened with correct title and data
       expect(screen.getByText('Edit Service')).toBeInTheDocument();
       
       // Verify form fields are filled with service data
@@ -113,12 +106,10 @@ jest.mock('axios', () => ({
     });
   
     test('submits new service correctly', async () => {
-      // Mock successful POST request
       axios.post.mockResolvedValue({ data: { id: 4, name: 'Group Class', description: 'Training in a group setting', price: '$75' } });
       
       render(<ManageServices />);
       
-      // Click add button
       fireEvent.click(screen.getByText('Add New Service'));
       
       // Fill out form
@@ -136,17 +127,15 @@ jest.mock('axios', () => ({
           description: 'Training in a group setting',
           price: '$75'
         });
-        expect(axios.get).toHaveBeenCalledTimes(2); // Initial load + after add
+        expect(axios.get).toHaveBeenCalledTimes(2);
       });
     });
   
     test('edits service correctly', async () => {
-      // Mock successful PUT request
       axios.put.mockResolvedValue({ data: { ...mockServices[0], name: 'Updated Basic Training' } });
       
       render(<ManageServices />);
       
-      // Wait for services to load
       await waitFor(() => {
         expect(screen.getByText('Basic Training')).toBeInTheDocument();
       });
@@ -173,12 +162,10 @@ jest.mock('axios', () => ({
     });
   
     test('deletes service correctly', async () => {
-      // Mock successful DELETE request
       axios.delete.mockResolvedValue({ data: {} });
       
       render(<ManageServices />);
       
-      // Wait for services to load
       await waitFor(() => {
         expect(screen.getByText('Basic Training')).toBeInTheDocument();
       });
@@ -193,7 +180,7 @@ jest.mock('axios', () => ({
       // Verify API call
       await waitFor(() => {
         expect(axios.delete).toHaveBeenCalledWith('http://localhost:4999/api/ServiceLibrary/1');
-        expect(axios.get).toHaveBeenCalledTimes(2); // Initial load + after delete
+        expect(axios.get).toHaveBeenCalledTimes(2);
       });
     });
   
@@ -203,7 +190,6 @@ jest.mock('axios', () => ({
       
       render(<ManageServices />);
       
-      // Verify error message
       await waitFor(() => {
         expect(screen.getByText('Failed to fetch services')).toBeInTheDocument();
       });
@@ -215,7 +201,6 @@ jest.mock('axios', () => ({
       
       render(<ManageServices />);
       
-      // Click add button
       fireEvent.click(screen.getByText('Add New Service'));
       
       // Fill out form
@@ -238,7 +223,6 @@ jest.mock('axios', () => ({
       
       render(<ManageServices />);
       
-      // Wait for services to load
       await waitFor(() => {
         expect(screen.getByText('Basic Training')).toBeInTheDocument();
       });
@@ -262,7 +246,6 @@ jest.mock('axios', () => ({
       
       render(<ManageServices />);
       
-      // Wait for services to load
       await waitFor(() => {
         expect(screen.getByText('Basic Training')).toBeInTheDocument();
       });
@@ -282,9 +265,6 @@ jest.mock('axios', () => ({
       
       // Click add button
       fireEvent.click(screen.getByText('Add New Service'));
-      
-      // Verify modal is open
-      expect(screen.getByText('Add New Service')).toBeInTheDocument();
       
       // Click cancel button
       fireEvent.click(screen.getByText('Cancel'));

@@ -42,7 +42,7 @@ export default function Navbar() {
                 ) : null}
 
                 {/* Show "Create Trainer" only for the specified email */}
-                {user?.email === "wgrimmer15@gmail.com" && (
+                {user?.email === "wgrimmer15@gmail.com" || user?.email === "esheiser@loyola.edu" && (
                     <CustomLink to="/admin-dashboard">ADMIN DASHBOARD</CustomLink>
                 )}
             </ul>

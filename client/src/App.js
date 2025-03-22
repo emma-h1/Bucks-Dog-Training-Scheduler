@@ -38,7 +38,7 @@ const ProtectedRoute = ({ children }) => {
   }
 
   // If the user is the administrator, render the children (e.g., the CreateTrainer page)
-  return user?.email === "wgrimmer15@gmail.com" ? children : null;
+  return user?.email === "wgrimmer15@gmail.com" || user?.email === "esheiser@loyola.edu" ? children : null;
 };
 
 function App() {

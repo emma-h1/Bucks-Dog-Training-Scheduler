@@ -156,50 +156,55 @@ const ManageTrainers = () => {
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>First Name</Form.Label>
+              <Form.Label htmlFor="firstName">First Name</Form.Label>
               <Form.Control
                 type="textarea"
                 name="firstName"
+                id="firstName"
                 value={formData.firstName}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Last Name</Form.Label>
+              <Form.Label htmlFor="lastName">Last Name</Form.Label>
               <Form.Control
                 as="textarea"
                 name="lastName"
+                id="lastName"
                 value={formData.lastName}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Username</Form.Label>
+              <Form.Label htmlFor="username">Username</Form.Label>
               <Form.Control
                 as="textarea"
                 name="username"
+                id="username"
                 value={formData.username}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
+              <Form.Label htmlFor="email">Email</Form.Label>
               <Form.Control
                 as="textarea"
                 name="email"
+                id="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Bio</Form.Label>
+              <Form.Label htmlFor="bio">Bio</Form.Label>
               <Form.Control
                 as="textarea"
                 name="bio"
+                id="bio"
                 value={formData.bio}
                 onChange={handleInputChange}
                 required

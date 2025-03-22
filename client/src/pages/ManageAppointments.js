@@ -256,11 +256,12 @@ const ManageAppointments = () => {
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>Dog</Form.Label>
+              <Form.Label htmlFor="dog">Dog</Form.Label>
               <Form.Select
                 name="dog"
                 value={formData.dog}
                 onChange={handleInputChange}
+                id="dog"
                 required
               >
                 <option>Select a dog</option>
@@ -277,9 +278,10 @@ const ManageAppointments = () => {
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Trainer</Form.Label>
+              <Form.Label htmlFor="trainer">Trainer</Form.Label>
               <Form.Select
                 name="trainer"
+                id="trainer"
                 value={formData.trainer}
                 onChange={handleInputChange}
                 required
@@ -293,50 +295,55 @@ const ManageAppointments = () => {
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Start Time</Form.Label>
+              <Form.Label htmlFor="startTime">Start Time</Form.Label>
               <Form.Control
                 type="datetime-local"
                 name="startTime"
+                id="startTime"
                 value={formData.startTime}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>End Time</Form.Label>
+              <Form.Label htmlFor="endTime">End Time</Form.Label>
               <Form.Control
                 type="datetime-local"
                 name="endTime"
+                id="endTime"
                 value={formData.endTime}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Location</Form.Label>
+              <Form.Label htmlFor="location">Location</Form.Label>
               <Form.Control
                 type="text"
                 name="location"
+                id="location"
                 value={formData.location}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Purpose</Form.Label>
+              <Form.Label htmlFor="purpose">Purpose</Form.Label>
               <Form.Control
                 as="textarea"
                 name="purpose"
+                id="purpose"
                 value={formData.purpose}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Balance Due</Form.Label>
+              <Form.Label htmlFor="balanceDue">Balance Due</Form.Label>
               <Form.Control
                 type="text"
                 name="balanceDue"
+                id="balanceDue"
                 value={formData.balanceDue}
                 onChange={handleInputChange}
                 required

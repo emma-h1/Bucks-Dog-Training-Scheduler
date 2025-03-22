@@ -43,7 +43,11 @@ const ManageProfile = () => {
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   // Fetch profile and then dogs in sequence to prevent race conditions
@@ -331,10 +335,11 @@ const ManageProfile = () => {
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3">
-              <Form.Label>Name</Form.Label>
+              <Form.Label htmlFor="name">Name</Form.Label>
               <Form.Control
                 type="text"
                 name="name"
+                id="name"
                 value={currentDog.name}
                 onChange={handleDogInputChange}
                 placeholder="Enter dog's name"
@@ -342,10 +347,11 @@ const ManageProfile = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Age</Form.Label>
+              <Form.Label htmlFor="age">Age</Form.Label>
               <Form.Control
                 type="text"
                 name="age"
+                id="age"
                 value={currentDog.age}
                 onChange={handleDogInputChange}
                 placeholder="Enter dog's age"
@@ -353,10 +359,11 @@ const ManageProfile = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Breed</Form.Label>
+              <Form.Label htmlFor="breed">Breed</Form.Label>
               <Form.Control
                 type="text"
                 name="breed"
+                id="breed"
                 value={currentDog.breed}
                 onChange={handleDogInputChange}
                 placeholder="Enter dog's breed"
@@ -364,10 +371,11 @@ const ManageProfile = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Weight</Form.Label>
+              <Form.Label htmlFor="weight">Weight</Form.Label>
               <Form.Control
                 type="text"
                 name="weight"
+                id="weight"
                 value={currentDog.weight}
                 onChange={handleDogInputChange}
                 placeholder="Enter dog's weight (lb)"
@@ -375,11 +383,12 @@ const ManageProfile = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Additional Info</Form.Label>
+              <Form.Label htmlFor="additionalInfo">Additional Info</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
                 name="additionalInfo"
+                id="additionalInfo"
                 value={currentDog.additionalInfo}
                 onChange={handleDogInputChange}
                 placeholder="Enter any additional information"

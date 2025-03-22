@@ -53,7 +53,6 @@ const ManageUsers = () => {
       setUserDogs(response.data);
     } catch (err) {
       setError('Failed to fetch user dogs');
-      setTimeout(() => setError(null), 3000);
     }
   };
 
@@ -295,40 +294,44 @@ const ManageUsers = () => {
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>First Name</Form.Label>
+              <Form.Label htmlFor="firstName">First Name</Form.Label>
               <Form.Control
                 type="text"
                 name="firstName"
+                id="firstName"
                 value={formData.firstName}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Last Name</Form.Label>
+              <Form.Label htmlFor="lastName">Last Name</Form.Label>
               <Form.Control
                 type="text"
                 name="lastName"
+                id="lastName"
                 value={formData.lastName}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Username</Form.Label>
+              <Form.Label htmlFor="username">Username</Form.Label>
               <Form.Control
                 type="text"
                 name="username"
+                id="username"
                 value={formData.username}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
+              <Form.Label htmlFor="email">Email</Form.Label>
               <Form.Control
                 type="email"
                 name="email"
+                id="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
@@ -414,10 +417,11 @@ const ManageUsers = () => {
         <Modal.Body>
           <Form onSubmit={handleDogSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>Name</Form.Label>
+              <Form.Label htmlFor="name">Name</Form.Label>
               <Form.Control
                 type="text"
                 name="name"
+                id="name"
                 value={dogFormData.name}
                 onChange={handleDogInputChange}
                 placeholder="Enter dog's name"
@@ -426,10 +430,11 @@ const ManageUsers = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Age</Form.Label>
+              <Form.Label htmlFor="age">Age</Form.Label>
               <Form.Control
                 type="text"
                 name="age"
+                id="age"
                 value={dogFormData.age}
                 onChange={handleDogInputChange}
                 placeholder="Enter dog's age"
@@ -438,10 +443,11 @@ const ManageUsers = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Breed</Form.Label>
+              <Form.Label htmlFor="breed">Breed</Form.Label>
               <Form.Control
                 type="text"
                 name="breed"
+                id="breed"
                 value={dogFormData.breed}
                 onChange={handleDogInputChange}
                 placeholder="Enter dog's breed"
@@ -450,10 +456,11 @@ const ManageUsers = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Weight</Form.Label>
+              <Form.Label htmlFor="weight">Weight</Form.Label>
               <Form.Control
                 type="text"
                 name="weight"
+                id="weight"
                 value={dogFormData.weight}
                 onChange={handleDogInputChange}
                 placeholder="Enter dog's weight (lb)"
@@ -462,11 +469,12 @@ const ManageUsers = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Additional Info</Form.Label>
+              <Form.Label htmlFor="additionalInfo">Additional Info</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
                 name="additionalInfo"
+                id="additionalInfo"
                 value={dogFormData.additionalInfo}
                 onChange={handleDogInputChange}
                 placeholder="Enter any additional information"
