@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Button, Form, Modal, Alert, Tab, Tabs, Badge} from 'react-bootstrap';
 import { Pencil, Trash, Plus, FileEarmarkText } from "react-bootstrap-icons";
-import Calendar from "./Calendar"
+import Calendar from "./AllCalendar"
 
 const ManageAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -212,6 +212,7 @@ const ManageAppointments = () => {
       }
       handleCloseModal();
       fetchAppointments();
+      window.location.reload();
     } catch (err) {
       setError('Failed to save appointment');
     }
@@ -271,21 +272,22 @@ const ManageAppointments = () => {
   };
 
   const isAppointmentPast = (appointment) => {
-    if (!appointment || !appointment.startTime) return false;
+    if (!appointment || !appointment.endTime) return false;
     const now = new Date();
-    const startTime = new Date(appointment.startTime);
-    return startTime < now;
+    const endTime = new Date(appointment.endTime);
+    return endTime < now;
   };
 
   const isAppointmentToday = (appointment) => {
-    if (!appointment || !appointment.startTime) return false;
+    if (!appointment || !appointment.startTime || !appointment.endTime) return false;
     
+    const now = new Date();
     const today = new Date();
-    const appointmentDate = new Date(appointment.startTime);
+    today.setHours(24,24,24,24);
+    const endTime = new Date(appointment.endTime);
+    const startTime = new Date(appointment.startTime);
+    return endTime > now && startTime <= today;
     
-    return (
-      appointmentDate.getDate() === today.getDate()
-    );
   };
 
   const getReportForAppointment = (appointment) => {
@@ -315,8 +317,10 @@ const ManageAppointments = () => {
                 <Alert variant="info">No appointments scheduled for today.</Alert>
               </Col>
             ) : (
-              appointments.filter(app => isAppointmentToday(app)).map((appointment) => (
-                <Col key={appointment.id} className="mb-3">
+              appointments.filter(app => isAppointmentToday(app))
+              .sort((a,b) => new Date(a.startTime) - new Date(b.startTime))
+              .map((appointment) => (
+                <Col key={appointment.id}>
                   <div className="d-flex justify-content-between align-items-center p-3 bg-white border shadow-sm">
                     <div>
                       <h5 className="mb-1 fw-bold">
@@ -363,8 +367,10 @@ const ManageAppointments = () => {
                 <Alert variant="info">No upcoming appointments found.</Alert>
               </Col>
             ) : (
-              appointments.filter(app => !isAppointmentPast(app) && !isAppointmentToday(app)).map((appointment) => (
-                <Col key={appointment.id} className="mb-3">
+              appointments.filter(app => !isAppointmentPast(app) && !isAppointmentToday(app))
+              .sort((a,b) => new Date(a.startTime) - new Date(b.startTime))
+              .map((appointment) => (
+                <Col key={appointment.id}>
                   <div className="d-flex justify-content-between align-items-center p-3 bg-white border shadow-sm">
                     <div>
                       <h5 className="mb-1 fw-bold">
@@ -411,7 +417,9 @@ const ManageAppointments = () => {
                 <Alert variant="info">No past appointments found.</Alert>
               </Col>
             ) : (
-              appointments.filter(app => isAppointmentPast(app)).map((appointment) => {
+              appointments.filter(app => isAppointmentPast(app))
+              .sort((a,b) => new Date(b.startTime) - new Date(a.startTime))
+              .map((appointment) => {
                 const report = getReportForAppointment(appointment.id);
                 return (
                   <Col key={appointment.id}>

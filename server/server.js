@@ -163,12 +163,25 @@ const formatDateForFirebase = (dateString) => {
   return new Date(dateString); // Convert ISO string to JavaScript Date
 };
 
-// GET all appointments
+// Endpoint to get appintments (all or by ownerID)
 app.get('/api/appointments', async (req, res) => {
+  const owner = req.query.owner; // Get ownerID from query parameter (optional)
+
   try {
-    const appointmentsSnapshot = await db.collection('appointments').get();
+    // Query Firestore for appts
+    const apptRef = db.collection('appointments');
+    let querySnapshot;
+
+    if (owner) {
+      // If ownerID is provided, filter appt by owner
+      querySnapshot = await apptRef.where('owner', '==', owner).get();
+    } else {
+      // If no ownerID, get all appts
+      querySnapshot = await apptRef.get();
+    }
+
     const appointments = [];
-    appointmentsSnapshot.forEach((doc) => {
+    querySnapshot.forEach((doc) => {
       const data = doc.data();
       appointments.push({
         id: doc.id,
@@ -182,10 +195,11 @@ app.get('/api/appointments', async (req, res) => {
         balanceDue: data.balanceDue
       });
     });
-    res.status(200).json(appointments);
-  } catch (error) {
-    console.error('Error fetching appointments:', error);
-    res.status(500).json({ error: 'Failed to fetch appointments' });
+
+    res.json(appointments); // Return the appts
+  } catch (err) {
+    console.error('Failed to fetch appts:', err);
+    res.status(500).json({ error: 'Failed to fetch appts' });
   }
 });
 

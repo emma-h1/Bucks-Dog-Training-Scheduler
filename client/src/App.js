@@ -9,7 +9,7 @@ import LogIn from "./pages/LogIn";
 import ResetPassword from "./pages/ResetPassword";
 import ManageServices from './pages/ManageServices.js';
 import ManageAppointments from './pages/ManageAppointments.js';
-import Calendar from './pages/Calendar.js';
+import MyAppointments from './pages/MyAppointments.js';
 import OurTeam from './pages/OurTeam.js';
 import AdminDashboard from './pages/AdminDashboard.js';
 import ManageUsers from './pages/ManageUsers.js';
@@ -65,7 +65,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/my-appointments" element={<MyAppointments />} />
           <Route path="/our-team" element={<OurTeam />} />
           <Route path="/manage-profile" element={<ManageProfile />} />
 

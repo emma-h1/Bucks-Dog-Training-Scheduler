@@ -28,7 +28,7 @@ export default function Navbar() {
 
     return (
         <nav className="nav">
-            <img src={logo} className="logo" />
+            <img src={logo} alt="logo" className="logo" />
 
             <ul> 
                 <CustomLink to="/">HOME</CustomLink>
@@ -38,11 +38,11 @@ export default function Navbar() {
                 <CustomLink to="/contact">CONTACT</CustomLink>
 
                 {user ? (
-                    <CustomLink to="/calendar">APPOINTMENTS</CustomLink>
+                    <CustomLink to="/my-appointments">APPOINTMENTS</CustomLink>
                 ) : null}
 
                 {/* Show "Create Trainer" only for the specified email */}
-                {user?.email === "wgrimmer15@gmail.com" || user?.email === "esheiser@loyola.edu" && (
+                {(user?.email === "wgrimmer15@gmail.com" || user?.email === "esheiser@loyola.edu") && (
                     <CustomLink to="/admin-dashboard">ADMIN DASHBOARD</CustomLink>
                 )}
             </ul>
@@ -61,7 +61,7 @@ export default function Navbar() {
                 </div>
             ) : (
                 <ul className="btn-signin">
-                    <img src={icon} className="icon" height={50} width={50} />
+                    <img src={icon} alt="icon" className="icon" height={50} width={50} />
                     <Link to="/login" className="signin">SIGN IN</Link>
                 </ul>
             )}

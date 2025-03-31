@@ -16,7 +16,7 @@ import axios from 'axios';
 
 import "./calendar.css";
 
-export default function Calendar() {
+export default function AllCalendar() {
     const [events, setEvents] = useState([]);
     const [openInfo, setOpenInfo] = useState(false);
 
@@ -54,10 +54,8 @@ export default function Calendar() {
                 });
 
                 setEvents(fetchedEvents);
-                setIsLoading(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
-                setIsLoading(false);
             }
         };
 
