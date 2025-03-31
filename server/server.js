@@ -655,3 +655,62 @@ processReminders = async () => {
 cron.schedule("0 8 * * *", processReminders);
 
 // processReminders();
+
+// Endpoint to fetch training reports
+app.get('/api/trainingReports', async (req, res) => {
+  try {
+    const reportCollection = db.collection('trainingReports');
+    const reportSnapshot = await reportCollection.get();
+
+    const reportData = reportSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    res.json(reportData);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch reports' });
+  }
+});
+
+// create report
+app.post('/api/trainingReports', async (req, res) => {
+  try {
+    const { appointment, reportText } = req.body;
+    const newReport = await db.collection('trainingReports').add({
+      appointment, reportText
+    });
+    res.status(201).json({ id: newReport.id });
+  } catch (error) {
+    console.error('Error creating report:', error);
+    res.status(500).json({ error: 'Failed to create report' });
+  }
+});
+
+// Update a report
+app.put('/api/trainingReports/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { appointment, reportText } = req.body;
+    
+    await db.collection('trainingReports').doc(id).update({
+      appointment, reportText
+    });
+    
+    res.json({ message: 'report updated successfully' });
+  } catch (error) {
+    console.error('Error updating report:', error);
+    res.status(500).json({ error: 'Failed to update report' });
+  }
+});
+
+// Delete a report
+app.delete('/api/trainingReports/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.collection('trainingReports').doc(id).delete();
+    res.json({ message: 'report deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting report:', error);
+    res.status(500).json({ error: 'Failed to delete report' });
+  }
+});

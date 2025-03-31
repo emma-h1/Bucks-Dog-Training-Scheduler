@@ -14,37 +14,54 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import axios from 'axios';
 
-import "./calendar.css"; // Import CSS for event styling
+import "./calendar.css";
 
 export default function Calendar() {
-    // State to store fetched events
     const [events, setEvents] = useState([]);
     const [openInfo, setOpenInfo] = useState(false);
 
     useEffect(() => {
-        // Fetch appointments from the backend
-        const fetchAppointments = async () => {
+        const fetchAllData = async () => {
             try {
-                const response = await axios.get('/api/appointments');
-                const fetchedEvents = response.data.map(appointment => ({
-                    id: appointment.id,
-                    title: `Trainer: ${appointment.trainer} - Dog: ${appointment.dog}`, 
-                    start: new Date(appointment.startTime), // Convert to Date
-                    end: new Date(appointment.endTime), // Convert to Date
-                    extendedProps: {
-                        owner: appointment.owner,
-                        location: appointment.location,
-                        purpose: appointment.purpose,
-                        balanceDue: appointment.balanceDue
-                    }
-                }));
+                // Fetch data concurrently
+                const [appointmentsResponse, dogsResponse, trainersResponse] = await Promise.all([
+                    axios.get('/api/appointments'),
+                    axios.get('http://localhost:4999/api/dogs'),
+                    axios.get('http://localhost:4999/api/trainers')
+                ]);
+
+                const dogs = dogsResponse.data;
+                const trainers = trainersResponse.data;
+
+                // Map appointments with resolved names
+                const fetchedEvents = appointmentsResponse.data.map(appointment => {
+                    // Find dog and trainer names
+                    const dog = dogs.find(d => d.id === appointment.dog);
+                    const trainer = trainers.find(t => t.id === appointment.trainer);
+
+                    return {
+                        id: appointment.id,
+                        title: `Trainer: ${trainer ? `${trainer.firstName} ${trainer.lastName}` : 'Unknown Trainer'} - Dog: ${dog ? dog.name : 'Unknown Dog'}`,
+                        start: new Date(appointment.startTime),
+                        end: new Date(appointment.endTime),
+                        extendedProps: {
+                            owner: appointment.owner,
+                            location: appointment.location,
+                            purpose: appointment.purpose,
+                            balanceDue: appointment.balanceDue
+                        }
+                    };
+                });
+
                 setEvents(fetchedEvents);
+                setIsLoading(false);
             } catch (error) {
-                console.error("Error fetching appointments:", error);
+                console.error("Error fetching data:", error);
+                setIsLoading(false);
             }
         };
 
-        fetchAppointments();
+        fetchAllData();
     }, []);
 
     return (
@@ -56,7 +73,7 @@ export default function Calendar() {
                 }}
                 plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin]}
                 initialView="dayGridMonth"
-                events={events} // Use fetched events
+                events={events}
                 slotMinTime="06:00:00"
                 slotMaxTime="18:00:00"
                 height="750px"
@@ -66,8 +83,6 @@ export default function Calendar() {
                         <div>{arg.event.title}</div>
                     </div>
                 )}
-                
-                
             />
             <Dialog open={openInfo}>
                 <DialogTitle>Info</DialogTitle>

@@ -250,9 +250,9 @@ const ManageUsers = () => {
       <Row xs={1} className="g-0">
         {users.map((user) => (
           <Col key={user.id}>
-            <div className="d-flex justify-content-between align-items-center p-3 bg-white border shadow-sm mb-2">
+            <div className="d-flex justify-content-between align-items-center p-3 bg-white border shadow-sm">
               <div>
-                <strong>{user.firstName} {user.lastName}</strong>
+                <h3>{user.firstName} {user.lastName}</h3>
                 <div>{user.username}</div>
                 <div>{user.email}</div>
               </div>
