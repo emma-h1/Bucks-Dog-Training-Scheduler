@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Row, Col, Alert, Tab, Tabs, Badge} from 'react-bootstrap';
-import {FileEarmarkText } from "react-bootstrap-icons";
+import { Container, Row, Col, Alert, Tab, Tabs, Badge, Form, Dropdown, InputGroup } from 'react-bootstrap';
+import { FileEarmarkText, Search } from "react-bootstrap-icons";
 import Calendar from "./SelfCalendar"
-import {auth} from "../firebase"
+import { auth } from "../firebase"
 
 const MyAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [trainingReports, setTrainingReports] = useState([]);
   const [error, setError] = useState(null);
-
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [filteredAppointments, setFilteredAppointments] = useState([]);
+  const [selectedDog, setSelectedDog] = useState(null);
 
   const [availableDogs, setAvailableDogs] = useState([]);
   const [availableOwners, setAvailableOwners] = useState([]);
@@ -28,6 +31,29 @@ const MyAppointments = () => {
     
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (searchTerm === '') {
+      setFilteredAppointments([]);
+      setShowDropdown(false);
+      setSelectedDog(null); // Clear selected dog when search is cleared
+      return;
+    }
+
+    const uniqueDogIds = [...new Set(appointments.map(app => app.dog))];
+    const matchingDogs = availableDogs.filter(dog => 
+      dog.name.toLowerCase().includes(searchTerm.toLowerCase()) && 
+      uniqueDogIds.includes(dog.id)
+    );
+
+    if (matchingDogs.length > 0) {
+      setFilteredAppointments(matchingDogs);
+      setShowDropdown(true);
+    } else {
+      setFilteredAppointments([]);
+      setShowDropdown(false);
+    }
+  }, [searchTerm, availableDogs, appointments]);
 
   const fetchDocuments = async () => {
     try {
@@ -109,13 +135,35 @@ const MyAppointments = () => {
     const endTime = new Date(appointment.endTime);
     const startTime = new Date(appointment.startTime);
     return endTime > now && startTime <= today;
-    
   };
 
   const getReportForAppointment = (appointment) => {
     return trainingReports.find(report => report.appointment === appointment);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value === '') {
+      setShowDropdown(false);
+      setSelectedDog(null); // Clear selected dog when search is cleared
+    } else {
+      setShowDropdown(true);
+    }
+  };
+
+  const handleDogSelect = (dogID) => {
+    setSearchTerm(getDogName(dogID));
+    setSelectedDog(dogID); // Set the selected dog ID
+    setShowDropdown(false);
+  };
+
+  const getFilteredAppointmentsByDog = (appointmentsList) => {
+    if (!searchTerm) return appointmentsList;
+    return appointmentsList.filter(app => {
+      const dogName = getDogName(app.dog);
+      return dogName.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+  };
 
   return (
     <Container className="py-4">
@@ -123,20 +171,74 @@ const MyAppointments = () => {
         <h1>My Appointments</h1>
       </div>
 
-      <Calendar></Calendar>
+      <div className="mb-4 w-50">
+        <Dropdown show={showDropdown} onToggle={(isOpen) => {if (!isOpen || searchTerm !== '') {setShowDropdown(isOpen)}}}>
+          <Dropdown.Toggle as={InputGroup} className="p-0" style={{ border: 'none' }}>
+            <InputGroup>
+              <InputGroup.Text>
+                <Search />
+              </InputGroup.Text>
+              <Form.Control
+                type="text"
+                placeholder="Search by dog name"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                onClick={() => searchTerm !== '' && setShowDropdown(true)}
+              />
+              {searchTerm && (
+                <button 
+                  className="btn btn-outline-secondary" 
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setShowDropdown(false);
+                    setSelectedDog(null); // Clear selected dog when search is cleared
+                  }}
+                >
+                  ×
+                </button>
+              )}
+            </InputGroup>
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu className="w-100 shadow-sm">
+            {filteredAppointments.length > 0 ? (
+              filteredAppointments.map(dog => (
+                <Dropdown.Item 
+                  key={dog.id} 
+                  onClick={() => handleDogSelect(dog.id)}
+                  className="d-flex justify-content-between align-items-center"
+                >
+                  {dog.name}
+                </Dropdown.Item>
+              ))
+            ) : (
+              <Dropdown.Item disabled>
+                No matches found
+              </Dropdown.Item>
+            )}
+          </Dropdown.Menu>
+        </Dropdown>
+      </div>
+
+      {/* Pass the selected dog ID to the Calendar component */}
+      <Calendar selectedDog={selectedDog} />
 
       {error && <Alert variant="danger">{error}</Alert>}
 
-
       <Tabs defaultActiveKey="today" id="appointment-tabs">
-      <Tab eventKey="today" title="Today's Appointments">
+        <Tab eventKey="today" title="Today's Appointments">
           <Row xs={1} className="g-0">
-            {appointments.filter(app => isAppointmentToday(app)).length === 0 ? (
+            {getFilteredAppointmentsByDog(appointments.filter(app => isAppointmentToday(app))).length === 0 ? (
               <Col>
-                <Alert variant="info">No appointments scheduled for today.</Alert>
+                <Alert variant="info">
+                  {searchTerm !== '' 
+                    ? `No appointments found for ${searchTerm} today.`
+                    : 'No appointments scheduled for today.'}
+                </Alert>
               </Col>
             ) : (
-              appointments.filter(app => isAppointmentToday(app))
+              getFilteredAppointmentsByDog(appointments.filter(app => isAppointmentToday(app)))
               .sort((a,b) => new Date(a.startTime) - new Date(b.startTime))
               .map((appointment) => (
                 <Col key={appointment.id}>
@@ -165,12 +267,16 @@ const MyAppointments = () => {
         </Tab>
         <Tab eventKey="upcoming" title="Upcoming Appointments">
           <Row xs={1} className="g-0">
-            {appointments.filter(app => !isAppointmentPast(app) && !isAppointmentToday(app)).length === 0 ? (
+            {getFilteredAppointmentsByDog(appointments.filter(app => !isAppointmentPast(app) && !isAppointmentToday(app))).length === 0 ? (
               <Col>
-                <Alert variant="info">No upcoming appointments found.</Alert>
+                <Alert variant="info">
+                  {searchTerm !== '' 
+                    ? `No upcoming appointments found for ${searchTerm}.`
+                    : 'No upcoming appointments found.'}
+                </Alert>
               </Col>
             ) : (
-              appointments.filter(app => !isAppointmentPast(app) && !isAppointmentToday(app))
+              getFilteredAppointmentsByDog(appointments.filter(app => !isAppointmentPast(app) && !isAppointmentToday(app)))
               .sort((a,b) => new Date(a.startTime) - new Date(b.startTime))
               .map((appointment) => (
                 <Col key={appointment.id}>
@@ -199,12 +305,16 @@ const MyAppointments = () => {
         </Tab>
         <Tab eventKey="past" title="Past Appointments">
           <Row xs={1} className="g-0">
-            {appointments.filter(app => isAppointmentPast(app)).length === 0 ? (
+            {getFilteredAppointmentsByDog(appointments.filter(app => isAppointmentPast(app))).length === 0 ? (
               <Col>
-                <Alert variant="info">No past appointments found.</Alert>
+                <Alert variant="info">
+                  {searchTerm !== '' 
+                    ? `No past appointments found for ${searchTerm}.`
+                    : 'No past appointments found.'}
+                </Alert>
               </Col>
             ) : (
-              appointments.filter(app => isAppointmentPast(app))
+              getFilteredAppointmentsByDog(appointments.filter(app => isAppointmentPast(app)))
               .sort((a,b) => new Date(b.startTime) - new Date(a.startTime))
               .map((appointment) => {
                 const report = getReportForAppointment(appointment.id);

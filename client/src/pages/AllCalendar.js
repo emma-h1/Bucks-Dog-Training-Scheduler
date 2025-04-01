@@ -5,20 +5,27 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-
 import axios from 'axios';
 
 import "./calendar.css";
 
-export default function AllCalendar() {
+export default function AllCalendar({ selectedDog }) {
     const [events, setEvents] = useState([]);
-    const [openInfo, setOpenInfo] = useState(false);
+    const [allEvents, setAllEvents] = useState([]);
+
+    // Filter events when selectedDog changes
+    useEffect(() => {
+        if (selectedDog) {
+            // Filter events to only show the selected dog's appointments
+            const filteredEvents = allEvents.filter(event => 
+                event.extendedProps.dogID === selectedDog
+            );
+            setEvents(filteredEvents);
+        } else {
+            // If no dog is selected, show all events
+            setEvents(allEvents);
+        }
+    }, [selectedDog, allEvents]);
 
     useEffect(() => {
         const fetchAllData = async () => {
@@ -48,11 +55,13 @@ export default function AllCalendar() {
                             owner: appointment.owner,
                             location: appointment.location,
                             purpose: appointment.purpose,
-                            balanceDue: appointment.balanceDue
+                            balanceDue: appointment.balanceDue,
+                            dogID: appointment.dog
                         }
-                    };
+                    };     
                 });
 
+                setAllEvents(fetchedEvents);
                 setEvents(fetchedEvents);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -82,17 +91,6 @@ export default function AllCalendar() {
                     </div>
                 )}
             />
-            <Dialog open={openInfo}>
-                <DialogTitle>Info</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        You don't own this event!
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenInfo(false)}>Ok</Button>
-                </DialogActions>
-            </Dialog>
         </div>
     );
 }

@@ -68,12 +68,14 @@ body {
   
 .modal {
 display: flex !important;
-width: 500px;
-height: 90vh;
-margin-left: 40%;
-margin-top: 30px;
-
+max-height: 90vh;
+margin-top: 40px;
 }
+
+.modal-dialog {
+    max-width: 500px;
+    width: 90%;
+  }
 
 /* Target the tab navigation */
 .nav-tabs {

@@ -37,6 +37,17 @@ const ManageProfile = () => {
 
   // Fetch user profile and dogs on component mount
   useEffect(() => {
+
+    // Fetch profile and then dogs in sequence to prevent race conditions
+    const fetchProfileAndDogs = async () => {
+      try {
+        await fetchProfileData();
+        await fetchDogs();
+      } catch (err) {
+        setError('Failed to load user data');
+      }
+    };
+
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         fetchProfileAndDogs();
@@ -49,16 +60,6 @@ const ManageProfile = () => {
       }
     };
   }, []);
-
-  // Fetch profile and then dogs in sequence to prevent race conditions
-  const fetchProfileAndDogs = async () => {
-    try {
-      await fetchProfileData();
-      await fetchDogs();
-    } catch (err) {
-      setError('Failed to load user data');
-    }
-  };
 
   // Fetch user profile data
   const fetchProfileData = async () => {
