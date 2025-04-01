@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Container, Row, Col, Button, Form, Modal, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Pencil, Trash, Plus } from "react-bootstrap-icons";
+import CreateTrainer from "./CreateTrainer.js";
 
 const ManageTrainers = () => {
   const [trainers, setTrainers] = useState([]);
@@ -16,6 +17,8 @@ const ManageTrainers = () => {
     email: '',
     bio: ''
   });
+
+  const [showCreateTrainer, setShowCreateTrainer] = useState(false);
 
   useEffect(() => {
     fetchTrainers();
@@ -98,6 +101,17 @@ const ManageTrainers = () => {
     }
   };
 
+  const handleOpenCreateTrainer = () => {
+    setShowCreateTrainer(true);
+  }
+
+  const handleCloseCreateTrainer = () => {
+    setShowCreateTrainer(false);
+  }
+
+  const handleCreatedTrainer = () => {
+    fetchTrainers(); // Refresh to include new trainer
+  }
 
   return (
     <div>
@@ -105,7 +119,7 @@ const ManageTrainers = () => {
       {/* Header with Add Button */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Manage Trainers</h1>
-        <Button variant="primary" onClick={() => handleShowModal()}>
+        <Button variant="primary" onClick={() => handleOpenCreateTrainer()}>
           <Plus size={20} /> Add New Trainer
         </Button>
       </div>
@@ -145,8 +159,7 @@ const ManageTrainers = () => {
     </Row>
 
     </Container>
-
-        {/* Add/Edit Trainer Modal */}
+        {/* Add/Edit Trainer Modal NO LONGER USED TO ADD*/}
       <Modal show={showModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>
@@ -222,8 +235,14 @@ const ManageTrainers = () => {
           </Form>
         </Modal.Body>
       </Modal>
-    </div>
 
+      {/* Add Trainer Modal*/}
+      <CreateTrainer 
+      show={showCreateTrainer} 
+      onHide={handleCloseCreateTrainer} 
+      onCreate={handleCreatedTrainer} />
+
+    </div>
   );
 };
 

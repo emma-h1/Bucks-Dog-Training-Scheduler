@@ -34,8 +34,6 @@
 .container-signin {
     margin-top: 25px;
     display: flex;
-    height: 93vh;
-    width: 35vw;
     min-width: 500px;
     border-radius: 10px;
     overflow: auto;

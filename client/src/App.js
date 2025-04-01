@@ -17,7 +17,6 @@ import ManageTrainers from './pages/ManageTrainers.js';
 import ManageProfile from './pages/ManageProfile.js';
 import { Route, Routes, useNavigate } from "react-router-dom";
 import DecideShowNavbar from './DecideShowNavbar.js';
-import CreateTrainer from './pages/CreateTrainer.js';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './firebase';
 
@@ -86,15 +85,6 @@ function App() {
                 </ProtectedRoute>
             } 
             />
-          
-          <Route
-            path="/create-trainer"
-            element={
-              <ProtectedRoute>
-                <CreateTrainer />
-              </ProtectedRoute>
-            }
-          />
 
           <Route
             path="/manage-users"
