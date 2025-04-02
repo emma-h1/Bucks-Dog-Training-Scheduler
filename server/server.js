@@ -2,8 +2,12 @@ const express = require("express");
 const admin = require("firebase-admin");
 const cors = require("cors");
 const { getFirestore } = require("firebase-admin/firestore");
+const { getStorage } = require("firebase-admin/storage");
+const multer = require("multer");
 const nodemailer = require('nodemailer');
 const cron = require('node-cron');
+const { v4: uuidv4 } = require("uuid");
+const path = require("path");
 
 const app = express();
 app.use(cors());
@@ -11,10 +15,11 @@ app.use(express.json());
 
 admin.initializeApp({
   credential: admin.credential.cert(require("./bucksdogtraining-82a35-firebase-adminsdk-fbsvc-4fff37689c.json")),
+  storageBucket: "bucksdogtraining-82a35.appspot.com",
 });
 
 const db = getFirestore();
-
+const bucket = admin.storage().bucket('bucksdogtraining-82a35.firebasestorage.app');
 // Middleware to verify Firebase authentication token
 const verifyToken = async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -726,5 +731,128 @@ app.delete('/api/trainingReports/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting report:', error);
     res.status(500).json({ error: 'Failed to delete report' });
+  }
+});
+
+const upload = multer({ storage: multer.memoryStorage() });
+
+// Upload an image to Firebase Storage
+app.post("/api/gallery/upload", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    // Generate a unique filename
+    const fileName = `gallery/${uuidv4()}${path.extname(req.file.originalname)}`;
+    const file = bucket.file(fileName);
+
+    // Upload file to Firebase Storage
+    const stream = file.createWriteStream({
+      metadata: {
+        contentType: req.file.mimetype,
+      },
+    });
+
+    stream.end(req.file.buffer);
+
+    stream.on("finish", async () => {
+      try {
+        // Get the file URL
+        const [url] = await file.getSignedUrl({
+          action: "read",
+          expires: "01-01-2030", // Set an expiration date far in the future
+        });
+
+        // Save the URL in Firestore
+        const imageDoc = await db.collection("gallery").add({
+          imageUrl: url,
+          createdAt: new Date(),
+        });
+
+        res.status(200).json({ message: "File uploaded successfully", id: imageDoc.id, imageUrl: url });
+      } catch (err) {
+        console.error("Error during URL fetch or Firestore save:", err);
+        res.status(500).json({ error: "Failed to save image URL" });
+      }
+    });
+
+    stream.on("error", (err) => {
+      console.error("Error uploading to Firebase Storage:", err);
+      res.status(500).json({ error: "Failed to upload file to Firebase Storage" });
+    });
+
+  } catch (error) {
+    console.error("Unexpected upload error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+// Get all images from Firestore
+app.get("/api/gallery", async (req, res) => {
+  try {
+    const snapshot = await db.collection("gallery").orderBy("createdAt", "desc").get();
+    const images = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json(images);
+  } catch (error) {
+    console.error("Error fetching images:", error);
+    res.status(500).json({ error: "Failed to fetch images" });
+  }
+});
+
+// Delete an image from Firebase Storage and Firestore
+// Delete an image from Firebase Storage and Firestore
+// Delete an image from Firebase Storage and Firestore
+app.delete("/api/gallery/:id", async (req, res) => {
+  let imageUrl; // Declare here so it's available in error handling
+  
+  try {
+    const { id } = req.params;
+
+    // Get the image document from Firestore
+    const imageDoc = await db.collection("gallery").doc(id).get();
+    if (!imageDoc.exists) {
+      return res.status(404).json({ error: "Image not found" });
+    }
+
+    imageUrl = imageDoc.data().imageUrl;
+    
+    // Parse the file path from URL
+    let filePath;
+    if (imageUrl.includes('firebasestorage.googleapis.com')) {
+      // New format: https://firebasestorage.googleapis.com/v0/b/bucksdogtraining-82a35.firebasestorage.app/o/gallery%2Ffilename.jpg?alt=media
+      filePath = imageUrl.split(`${bucket.name}/o/`)[1].split('?')[0];
+    } else if (imageUrl.includes('storage.googleapis.com')) {
+      // Old appspot.com format: https://storage.googleapis.com/bucksdogtraining-82a35.appspot.com/gallery/filename.jpg
+      filePath = imageUrl.split(`${bucket.name}/`)[1].split('?')[0];
+    } else {
+      throw new Error('Unrecognized storage URL format');
+    }
+
+    // Decode URI components (handles %2F etc.)
+    filePath = decodeURIComponent(filePath);
+
+    // Debug log (temporary - can remove after testing)
+    console.log('Delete operation:', { id, imageUrl, filePath });
+
+    // Delete the file from Firebase Storage
+    await bucket.file(filePath).delete();
+
+    // Delete the document from Firestore
+    await db.collection("gallery").doc(id).delete();
+
+    res.json({ message: "Image deleted successfully" });
+    
+  } catch (error) {
+    console.error("Error deleting image:", {
+      message: error.message,
+      url: imageUrl || 'undefined', // Now safely referenced
+      stack: error.stack
+    });
+    res.status(500).json({ 
+      error: "Failed to delete image",
+      details: error.message 
+    });
   }
 });

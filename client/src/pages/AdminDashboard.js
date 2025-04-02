@@ -64,6 +64,18 @@ const AdminDashboard = () => {
             </Card>
             </Link>
         </Col>
+        <Col>
+          <Link to="/manage-gallery" className="text-decoration-none">
+            <Card className="h-100 shadow-sm hover-effect">
+              <Card.Body className="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" fill="currentColor" className="bi bi-images" viewBox="0 0 16 16">
+                  <path d="M4.502 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-9zm-.5-1A1.5 1.5 0 0 0 2.5 3v9A1.5 1.5 0 0 0 4 13.5h7a1.5 1.5 0 0 0 1.5-1.5V3A1.5 1.5 0 0 0 11 1.5h-7zm1 3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v5.5L9.5 8.5l-1 1-2-2-1.5 1.5v-5zm7 8a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5V11l2-2 2 2 1-1 2 2v1z"/>
+                </svg>
+                <Card.Title className="fw-bold p-3">Manage Gallery</Card.Title>
+              </Card.Body>
+            </Card>
+          </Link>
+        </Col>
         </Row>
     </Container>
   );

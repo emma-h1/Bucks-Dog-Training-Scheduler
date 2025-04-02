@@ -15,6 +15,7 @@ import AdminDashboard from './pages/AdminDashboard.js';
 import ManageUsers from './pages/ManageUsers.js';
 import ManageTrainers from './pages/ManageTrainers.js';
 import ManageProfile from './pages/ManageProfile.js';
+import ManageGallery from './pages/ManageGallery.js';
 import { Route, Routes, useNavigate } from "react-router-dom";
 import DecideShowNavbar from './DecideShowNavbar.js';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -100,6 +101,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <ManageTrainers />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/manage-gallery"
+            element={
+              <ProtectedRoute>
+                <ManageGallery />
               </ProtectedRoute>
             }
           />
