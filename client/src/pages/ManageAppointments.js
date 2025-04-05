@@ -178,7 +178,6 @@ const ManageAppointments = () => {
     try {
       const date = new Date(timestamp);
       if (isNaN(date.getTime())) {
-        console.error('Invalid date:', timestamp);
         return '';
       }
       
@@ -244,7 +243,6 @@ const ManageAppointments = () => {
     try {
       const date = new Date(timestamp);
       if (isNaN(date.getTime())) {
-        console.error('Invalid date:', timestamp);
         return 'Invalid date';
       }
       return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
@@ -428,44 +426,84 @@ const ManageAppointments = () => {
             ) : (
               getFilteredAppointmentsByDog(appointments.filter(app => isAppointmentToday(app)))
               .sort((a,b) => new Date(a.startTime) - new Date(b.startTime))
-              .map((appointment) => (
-                <Col key={appointment.id}>
-                  <div className="d-flex justify-content-between align-items-center p-3 bg-white border shadow-sm">
-                    <div>
-                      <h5 className="mb-1 fw-bold">
-                        {getDogName(appointment.dog)} &emsp; | &emsp;
-                        {getOwnerName(appointment.owner)}
-                      </h5>
-                      <p className="text-muted mb-1">
-                        <strong>Start:</strong> {formatTimestamp(appointment.startTime)} &emsp;| &emsp;
-                        <strong>End:</strong> {formatTimestamp(appointment.endTime)} &emsp;| &emsp;
-                        <strong>Trainer:</strong> {getTrainerName(appointment.trainer)}
-                      </p>
-                      <p className="text-muted mb-1">
-                        <strong>Location:</strong> {appointment.location || 'N/A'} &emsp;| &emsp;
-                        <strong>Balance Due:</strong> {appointment.balanceDue || '$0'}
-                      </p>
-                      <p className="text-muted mb-1"><strong>Purpose:</strong> {appointment.purpose || 'N/A'}</p>
+              .map((appointment) => {
+                const report = getReportForAppointment(appointment.id);
+                return (
+                  <Col key={appointment.id}>
+                    <div className="p-3 bg-white border shadow-sm">
+                      <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                          <h5 className="mb-1 fw-bold">
+                            {getDogName(appointment.dog)} &emsp; | &emsp;
+                            {getOwnerName(appointment.owner)}
+                          </h5>
+                          <p className="text-muted mb-1">
+                            <strong>Start:</strong> {formatTimestamp(appointment.startTime)} &emsp;| &emsp;
+                            <strong>End:</strong> {formatTimestamp(appointment.endTime)} &emsp;| &emsp;
+                            <strong>Trainer:</strong> {getTrainerName(appointment.trainer)}
+                          </p>
+                          <p className="text-muted mb-1">
+                            <strong>Location:</strong> {appointment.location || 'N/A'} &emsp;| &emsp;
+                            <strong>Balance Due:</strong> {appointment.balanceDue || '$0'}
+                          </p>
+                          <p className="text-muted mb-1"><strong>Purpose:</strong> {appointment.purpose || 'N/A'}</p>
+                        </div>
+                        <div className="d-flex gap-2">
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={() => handleShowModal(appointment)}
+                          >
+                            <Pencil /> Edit
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => handleDelete(appointment.id)}
+                          >
+                            <Trash /> Delete
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {report ? (
+                        <div className="mt-3 p-3 bg-light rounded">
+                          <div className="d-flex justify-content-between align-items-center mb-2">
+                            <h6 className="mb-0"><FileEarmarkText className="me-2" />Training Report</h6>
+                            <div className="d-flex gap-2">
+                              <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => handleShowReportModal(appointment, report)}
+                              >
+                                <Pencil /> Edit Report
+                              </Button>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => handleDeleteReport(report.id)}
+                              >
+                                <Trash /> Delete Report
+                              </Button>
+                            </div>
+                          </div>
+                          <div style={{ whiteSpace: 'pre-wrap' }}>{report.reportText}</div>
+                        </div>
+                      ) : (
+                        <div className="d-flex mt-3">
+                          <Button 
+                            variant="outline-secondary"
+                            data-testid="addReport"
+                            onClick={() => handleShowReportModal(appointment)}
+                          >
+                            <Plus className="me-1" /> Add Training Report
+                          </Button>
+                        </div>
+                      )}
                     </div>
-                    <div className="d-flex gap-2">
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        onClick={() => handleShowModal(appointment)}
-                      >
-                        <Pencil /> Edit
-                      </Button>
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={() => handleDelete(appointment.id)}
-                      >
-                        <Trash /> Delete
-                      </Button>
-                    </div>
-                  </div>
-                </Col>
-              ))
+                  </Col>
+                );
+              })
             )}
           </Row>
         </Tab>
@@ -605,6 +643,7 @@ const ManageAppointments = () => {
                         <div className="d-flex mt-3">
                           <Button 
                             variant="outline-secondary"
+                            data-testid="addReport"
                             onClick={() => handleShowReportModal(appointment)}
                           >
                             <Plus className="me-1" /> Add Training Report

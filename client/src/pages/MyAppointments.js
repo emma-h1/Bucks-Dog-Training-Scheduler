@@ -94,7 +94,6 @@ const MyAppointments = () => {
     try {
       const date = new Date(timestamp);
       if (isNaN(date.getTime())) {
-        console.error('Invalid date:', timestamp);
         return 'Invalid date';
       }
       return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
