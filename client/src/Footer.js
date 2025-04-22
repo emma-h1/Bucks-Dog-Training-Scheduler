@@ -6,7 +6,7 @@ const Footer = () => {
   const companyName = "Buck's Dog Training of Central Jersey";
   
   return (
-    <footer className="footer mt-5">
+    <footer className="footer">
       <div className="footer-container">
         {/* Company info */}
         <div className="company-info">

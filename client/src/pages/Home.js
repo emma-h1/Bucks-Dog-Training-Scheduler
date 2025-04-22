@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import bg from "../assets/dogRunning.png";
 import "./Home.css";
-import axios from "axios";
 import cgc from "../assets/cgc.png";
 import usadt from "../assets/usadt.png";
 import catchImg from "../assets/catch.png";
+import lauraine from "../assets/lauraine.png";
 
 const bgStyle = {
   backgroundImage: `url(${bg})`,
@@ -21,6 +21,7 @@ export default function Home() {
 
   useEffect(() => {
     // Fetch gallery images
+    /*
     const fetchImages = async () => {
       try {
         const response = await axios.get("http://localhost:4999/api/gallery");
@@ -33,7 +34,7 @@ export default function Home() {
       }
     };
     
-    fetchImages();
+    fetchImages(); */
   }, []);
 
   return (
@@ -50,7 +51,7 @@ export default function Home() {
       </div>
 
       {/* Why Us Section */}
-      <Container className="py-5">
+      <Container className="py-5 mt-5">
         <h2 className="text-center why-us">Why Choose Buck's Dog Training</h2>
         <h6 className="text-center why-us-par">We go beyond the standard dog training methods. Our balanced approach respects your dog's inherent nature while nurturing
           them to adapt to human expectations. This not only leads to a well-behaved pet but also ensures the retention of their training in the long term.
@@ -60,9 +61,36 @@ export default function Home() {
         </h3>
       </Container>
 
+      <div className="your-expert-guide mt-4">
+        <img
+          src={lauraine}
+          alt={`lauraine`}
+          style={{
+            width: '400px',
+            height: '400px',
+            borderRadius: '12px',
+            objectFit: 'cover',
+            marginTop: '100px',
+            marginLeft: '40px'
+          }}
+        />
+        <div>
+        <h2 className="text-center why-us">Your Expert Guide: Lauraine Wright</h2>
+        <h6 className="text-center why-us-par">Meet Lauraine Wright, your personal guide on this journey.</h6>
+        <h6 className="text-center why-us-par">
+          An alumnus of the esteemed CATCH Canine Trainers Academy, Lauraine's lifelong passion for dogs has led her through various experiences—rescue, foster, kennel work, and training.
+        </h6>
+        <h6 className="text-center why-us-par">
+          Lauraine isn't just a trainer; she's a partner, committed to helping you and your dog achieve your full potential. Remember, as Lauraine says, "Invest your time and effort.
+          Your reward is a stronger bond with your dog. Give your furry friend the structure, guidance, and support they deserve."
+        </h6>
+        </div>
+      </div>
+
       {/* Gallery Section */}
       <Container className="gallery-section py-5 bg-light">
         <h2 className="text-center mb-4">Our Happy Clients</h2>
+        {/*
         <Row xs={1} md={3} lg={4} className="g-4">
           {galleryImages.map(({ id, url }) => (
             <Col key={id}>
@@ -71,7 +99,7 @@ export default function Home() {
               </Card>
             </Col>
           ))}
-        </Row>
+        </Row> */}
       </Container>
       <div className="org">
         <img src={cgc} alt="cgc" height={120} />

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Container, Row, Col, Button, Form, Modal, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Button, Form, Modal, Alert, Image } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Pencil, Trash, Plus } from "react-bootstrap-icons";
+import { Pencil, Trash, Plus, Upload } from "react-bootstrap-icons";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import CreateTrainer from "./CreateTrainer.js";
 
 const ManageTrainers = () => {
@@ -10,12 +11,17 @@ const ManageTrainers = () => {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [editingTrainer, setEditingTrainer] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
+  
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     username: '',
     email: '',
-    bio: ''
+    bio: '',
+    imgURL: ''
   });
 
   const [showCreateTrainer, setShowCreateTrainer] = useState(false);
@@ -41,8 +47,10 @@ const ManageTrainers = () => {
         lastName: trainer.lastName,
         username: trainer.username,
         email: trainer.email,
-        bio: trainer.bio
+        bio: trainer.bio,
+        imgURL: trainer.imgURL || ''
       });
+      setImagePreview(trainer.imgURL || null);
     } else {
       setEditingTrainer(null);
       setFormData({
@@ -50,7 +58,10 @@ const ManageTrainers = () => {
         lastName: '',
         username: '',
         email: '',
-        bio: '' });
+        bio: '',
+        imgURL: ''
+      });
+      setImagePreview(null);
     }
     setShowModal(true);
   };
@@ -59,12 +70,14 @@ const ManageTrainers = () => {
     setShowModal(false);
     setEditingTrainer(null);
     setFormData({
-        firstName: '',
-        lastName: '',
-        username: '',
-        email: '',
-        bio: ''
-     });
+      firstName: '',
+      lastName: '',
+      username: '',
+      email: '',
+      bio: '',
+      imgURL: ''
+    });
+    setImagePreview(null);
   };
 
   const handleInputChange = (e) => {
@@ -73,6 +86,42 @@ const ManageTrainers = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Preview the selected image
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImagePreview(e.target.result);
+    };
+    reader.readAsDataURL(file);
+
+    try {
+      setUploading(true);
+      // Get Firebase storage reference
+      const storage = getStorage();
+      const storageRef = ref(storage, `trainer-images/${new Date().getTime()}_${file.name}`);
+      
+      // Upload the file
+      const snapshot = await uploadBytes(storageRef, file);
+      
+      // Get the download URL
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      
+      // Update form data with the image URL
+      setFormData(prev => ({
+        ...prev,
+        imgURL: downloadURL
+      }));
+      
+      setUploading(false);
+    } catch (err) {
+      setError('Failed to upload image');
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -132,26 +181,38 @@ const ManageTrainers = () => {
         {trainers.map((trainer) => (
         <Col key={trainer.id}>
         <div className="d-flex justify-content-between align-items-center p-3 bg-white border shadow-sm">
-            <div>
+            <div className="d-flex align-items-center">
+              {trainer.imgURL && (
+                <Image 
+                  src={trainer.imgURL} 
+                  roundedCircle 
+                  width={64} 
+                  height={64} 
+                  className="me-3" 
+                  alt={`${trainer.firstName} ${trainer.lastName}`} 
+                />
+              )}
+              <div>
                 <h3>{trainer.firstName} {trainer.lastName}</h3>
                 <div>{trainer.username} | {trainer.email}</div>
                 <div>Biography: {trainer.bio}</div>
+              </div>
             </div>
             <div className="d-flex gap-2">
-            <Button
+              <Button
                 variant="outline-primary"
                 size="sm"
                 onClick={() => handleShowModal(trainer)}
-            >
-            <Pencil /> Edit
-            </Button>
-            <Button
+              >
+                <Pencil /> Edit
+              </Button>
+              <Button
                 variant="outline-danger"
                 size="sm"
                 onClick={() => handleDelete(trainer.id)}
-            >
+              >
                 <Trash /> Delete
-          </Button>
+              </Button>
             </div>
          </div>
         </Col>
@@ -224,11 +285,45 @@ const ManageTrainers = () => {
               />
             </Form.Group>
             
+            {/* Image Upload Field */}
+            <Form.Group className="mb-3">
+              <Form.Label>Profile Image</Form.Label>
+              <div className="d-flex flex-column align-items-center">
+                {imagePreview && (
+                  <Image 
+                    src={imagePreview} 
+                    alt="Image preview" 
+                    thumbnail 
+                    className="mb-2" 
+                    style={{ maxHeight: '150px' }} 
+                  />
+                )}
+                <div className="d-flex align-items-center w-100">
+                  <Form.Control
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                  />
+                  <Button 
+                    variant="outline-secondary" 
+                    onClick={() => fileInputRef.current.click()}
+                    disabled={uploading}
+                    className="w-100"
+                  >
+                    <Upload className="me-2" />
+                    {uploading ? 'Uploading...' : imagePreview ? 'Change Image' : 'Upload Image'}
+                  </Button>
+                </div>
+              </div>
+            </Form.Group>
+            
             <div className="d-flex gap-2 justify-content-end">
               <Button variant="secondary" onClick={handleCloseModal}>
                 Cancel
               </Button>
-              <Button variant="primary" type="submit">
+              <Button variant="primary" type="submit" disabled={uploading}>
                 {editingTrainer ? 'Save Changes' : 'Add Trainer'}
               </Button>
             </div>

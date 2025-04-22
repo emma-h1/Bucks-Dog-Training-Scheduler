@@ -43,7 +43,7 @@ const CreateTrainer = ({show, onHide, onCreate }) => {
     }
 
     try {
-      const adminEmail = "wgrimmer15@gmail.com"; // Will change in futute to check for ADMIN bool
+      const adminEmail = "esheiser@loyola.edu"; // Will change in futute to check for ADMIN bool
       const currentUser = auth.currentUser;
 
       if (currentUser && currentUser.email === adminEmail) {
@@ -51,9 +51,6 @@ const CreateTrainer = ({show, onHide, onCreate }) => {
           setIsPasswordPromptVisible(true);
           return; 
         }
-
-        
-        await signOut(auth);
 
         // Trainer creation call
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -67,8 +64,6 @@ const CreateTrainer = ({show, onHide, onCreate }) => {
           email,
         });
 
-        await signInWithEmailAndPassword(auth, adminEmail, adminPassword);
-        //resets all fields to blank
 
         setSuccessMessage("Trainer account created successfully! Administrator session restored.");
         

@@ -329,10 +329,10 @@ app.post('/api/trainers', async (req, res) => {
 app.put('/api/trainers/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { username, firstName, lastName, email, bio } = req.body;
+    const { username, firstName, lastName, email, bio, imgURL } = req.body;
     
     await db.collection('trainers').doc(id).update({
-      username, firstName, lastName, email, bio
+      username, firstName, lastName, email, bio, imgURL
     });
     
     res.json({ message: 'trainer updated successfully' });

@@ -34,7 +34,6 @@ export default function Navbar() {
                 <CustomLink to="/">HOME</CustomLink>
                 <CustomLink to="/about">ABOUT</CustomLink>
                 <CustomLink to="/services">SERVICES</CustomLink>  
-                <CustomLink to="/our-team">OUR TEAM</CustomLink> 
                 <CustomLink to="/contact">CONTACT</CustomLink>
 
                 {user ? (

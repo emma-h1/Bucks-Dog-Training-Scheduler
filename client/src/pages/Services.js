@@ -31,8 +31,8 @@ const ServicesPage = () => {
 
   return (
 
-    <Container className="py-4">
-        <h1 className="mb-4 fw-bold">Our Services</h1>
+    <Container className="mb-4">
+        <h1 className="page-header">Our Services</h1>
         {/* Services Grid */}
       <Row xs={1} md={2} lg={3} className="g-4">
         {services.map((service) => (

@@ -20,12 +20,12 @@
 .why-us {
     font-weight: 800;
     font-size: 52px;
-    margin-top: 140px;
+    margin-top: 70px;
     margin-bottom: 50px;
 }
 
 .why-us-par {
-    font-size: 32px;
+    font-size: 30px;
     margin-bottom: 35px;
     font-weight: 400;
     width: 65vw;
@@ -41,6 +41,7 @@
 .org {
     justify-self: center;
     margin-top: 100px;
+    margin-bottom: 40px;
 }
 
 .org img {
