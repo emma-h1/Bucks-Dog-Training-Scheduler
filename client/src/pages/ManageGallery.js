@@ -47,6 +47,7 @@ const ManageGallery = () => {
 
   // Delete Image
   const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this appointment?')) {
     try {
       await axios.delete(`http://localhost:4999/api/gallery/${id}`);
       setImages(images.filter((image) => image.id !== id));
@@ -54,6 +55,7 @@ const ManageGallery = () => {
     } catch (error) {
       console.error("Delete error:", error);
     }
+  }
   };
 
   return (

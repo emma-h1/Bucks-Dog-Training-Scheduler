@@ -1,0 +1,51 @@
+.footer {
+    background-color: #1F2833;
+    color: white;
+    padding: 1rem 1rem;
+    text-align: center;
+  }
+  
+  .footer-container {
+    max-width: 800px;
+    margin: 0 auto;
+    margin-top: 20px;
+  }
+  
+  .company-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .logo {
+    width: 100px;
+    height: 100px;
+    margin-right: 1rem;
+  }
+  
+  .company-text h2,
+  .company-text h5 {
+    margin: 0;
+    text-align: left;
+  }
+  
+  .social-links {
+    margin-bottom: 1.5rem;
+  }
+  
+  .social-links a {
+    color: white;
+    margin: 0 1.5rem;
+    transition: color 0.3s;
+  }
+  
+  .social-links a:hover {
+    color: #ccc;
+  }
+  
+  .copyright {
+    color: #555c78;
+    font-size: 0.9rem;
+  }
+  

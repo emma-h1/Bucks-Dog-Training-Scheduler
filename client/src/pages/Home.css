@@ -1,29 +1,48 @@
-
-.div container {
-    backgroundImage: url(../assets/dogRunning.jpeg);
-    backgroundPosition: 'center';
-    backgroundSize: 'cover';
-    backgroundRepeat: 'no-repeat';
-    width: 100vw;
-    height: 100vh;
-    margin-left: 0;
-}
-
 .header {
-    color: white;
-    font-size: 58px;
+    color: #1F2833;
+    font-size: 60px;
     font-weight: 800;
-    padding: 20px;
-    padding-top: 10vh;
-    padding-left: 100px;
+    padding: 13px;
+    padding-top: 15vh;
+    padding-left: 110px;
     width: 40vw;
 }
 
 .text {
-    color: white;
+    color: #1F2833;
     font-size: 24px;
     font-weight: 500;
     padding: 20px;
-    padding-left: 100px;
+    padding-left: 110px;
     width: 40vw;
+}
+
+.why-us {
+    font-weight: 800;
+    font-size: 52px;
+    margin-top: 140px;
+    margin-bottom: 50px;
+}
+
+.why-us-par {
+    font-size: 32px;
+    margin-bottom: 35px;
+    font-weight: 400;
+    width: 65vw;
+    justify-self: center;
+}
+
+.why-us-par2 {
+    width: 55vw;
+    justify-self: center;
+    margin-bottom: 50px;
+}
+
+.org {
+    justify-self: center;
+    margin-top: 100px;
+}
+
+.org img {
+    margin-right: 60px;
 }

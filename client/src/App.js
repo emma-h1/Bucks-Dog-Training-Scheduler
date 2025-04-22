@@ -20,6 +20,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import DecideShowNavbar from './DecideShowNavbar.js';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './firebase';
+import Footer from './Footer.js';
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ children }) => {
@@ -56,7 +57,7 @@ function App() {
         <Navbar />
       </DecideShowNavbar>
 
-      <div className="container">
+      <div className="main">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -124,6 +125,9 @@ function App() {
           />
 
         </Routes>
+      </div>
+      <div>
+        < Footer />
       </div>
     </>
   );

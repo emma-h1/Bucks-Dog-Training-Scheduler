@@ -6,7 +6,7 @@ import { signOut } from "firebase/auth";
 import Dropdown from "react-bootstrap/Dropdown";
 import { useState, useEffect } from "react";
 import React from "react";
-import "bootstrap/dist/css/bootstrap.css";
+
 
 export default function Navbar() {
     const [user, setUser] = useState(null);
@@ -28,7 +28,7 @@ export default function Navbar() {
 
     return (
         <nav className="nav">
-            <img src={logo} alt="logo" className="logo" />
+            <img src={logo} alt="logo" className="logo m-3" />
 
             <ul> 
                 <CustomLink to="/">HOME</CustomLink>
