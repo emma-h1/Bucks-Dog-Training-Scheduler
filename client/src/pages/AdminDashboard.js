@@ -7,9 +7,7 @@ const AdminDashboard = () => {
 
   return (
     <Container className="py-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Admin Dashboard</h1>
-      </div>
+        <h1 className="manage-header">Admin Dashboard</h1>
 
       {/* Admin Tools Grid */}
       <Row xs={1} md={2} lg={4} className="g-4">

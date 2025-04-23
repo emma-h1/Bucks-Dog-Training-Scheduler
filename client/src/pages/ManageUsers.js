@@ -235,8 +235,8 @@ const ManageUsers = () => {
   return (
     <Container className="py-4">
       {/* Header with Add Button */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Manage Users</h1>
+      <h1 className="manage-header">Manage Users</h1>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <Button variant="primary" onClick={() => handleShowModal()}>
           <Plus size={20} /> Add New User
         </Button>

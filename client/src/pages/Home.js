@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import bg from "../assets/dogRunning.png";
+import axios from "axios";
 import "./Home.css";
 import cgc from "../assets/cgc.png";
 import usadt from "../assets/usadt.png";
@@ -21,7 +22,6 @@ export default function Home() {
 
   useEffect(() => {
     // Fetch gallery images
-    /*
     const fetchImages = async () => {
       try {
         const response = await axios.get("http://localhost:4999/api/gallery");
@@ -34,7 +34,7 @@ export default function Home() {
       }
     };
     
-    fetchImages(); */
+    fetchImages();
   }, []);
 
   return (
@@ -90,7 +90,6 @@ export default function Home() {
       {/* Gallery Section */}
       <Container className="gallery-section py-5 bg-light">
         <h2 className="text-center mb-4">Our Happy Clients</h2>
-        {/*
         <Row xs={1} md={3} lg={4} className="g-4">
           {galleryImages.map(({ id, url }) => (
             <Col key={id}>
@@ -99,7 +98,7 @@ export default function Home() {
               </Card>
             </Col>
           ))}
-        </Row> */}
+        </Row>
       </Container>
       <div className="org">
         <img src={cgc} alt="cgc" height={120} />

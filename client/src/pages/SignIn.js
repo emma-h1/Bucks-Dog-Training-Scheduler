@@ -45,7 +45,7 @@ export default function SignUp() {
   };
 
   return (
-    <div className="container-signin">
+    <div className="container-signin mb-4">
       <img
         src={logo}
         alt="Logo"

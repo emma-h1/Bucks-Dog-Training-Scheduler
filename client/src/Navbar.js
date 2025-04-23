@@ -27,7 +27,7 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="nav">
+        <nav className="nav-bar">
             <img src={logo} alt="logo" className="logo m-3" />
 
             <ul> 

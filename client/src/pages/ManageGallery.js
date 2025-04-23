@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Button, Form, Card } from "react-bootstrap";
 import axios from "axios";
+import { Trash } from "react-bootstrap-icons";
 
 const ManageGallery = () => {
   const [images, setImages] = useState([]);
@@ -60,7 +61,7 @@ const ManageGallery = () => {
 
   return (
     <Container className="py-4">
-      <h1>Manage Gallery</h1>
+      <h1 className="manage-header">Manage Gallery</h1>
 
       {/* Upload Form */}
       <Form className="mb-4">
@@ -80,8 +81,12 @@ const ManageGallery = () => {
             <Card className="h-100 shadow-sm">
               <Card.Img variant="top" src={url} />
               <Card.Body className="text-center">
-                <Button variant="danger" onClick={() => handleDelete(id)}>
-                  Delete
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={() => handleDelete(id)}
+                >
+                  <Trash /> Delete
                 </Button>
               </Card.Body>
             </Card>

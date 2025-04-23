@@ -166,9 +166,7 @@ const MyAppointments = () => {
 
   return (
     <Container className="py-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>My Appointments</h1>
-      </div>
+        <h1 className="manage-header">My Appointments</h1>
 
       <div className="mb-4 w-50">
         <Dropdown show={showDropdown} onToggle={(isOpen) => {if (!isOpen || searchTerm !== '') {setShowDropdown(isOpen)}}}>

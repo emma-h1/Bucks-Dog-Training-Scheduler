@@ -199,13 +199,15 @@ const ManageProfile = () => {
 
   // Remove a dog from the user's profile
   const handleRemoveDog = async (dogID) => {
-    try {
-      await axios.delete(`http://localhost:4999/api/dogs/${dogID}`);
-      await axios.delete(`http://localhost:4999/api/users/${auth.currentUser.uid}/dogs/${dogID}`);
-      setSuccess('Dog removed successfully');
-      fetchDogs(); // Refresh the list of dogs
-    } catch (err) {
-      setError('Failed to remove dog');
+    if (window.confirm('Are you sure you want to delete this dog?')) {
+      try {
+        await axios.delete(`http://localhost:4999/api/dogs/${dogID}`);
+        await axios.delete(`http://localhost:4999/api/users/${auth.currentUser.uid}/dogs/${dogID}`);
+        setSuccess('Dog removed successfully');
+        fetchDogs(); // Refresh the list of dogs
+      } catch (err) {
+        setError('Failed to remove dog');
+      }
     }
   };
 
@@ -256,9 +258,7 @@ const ManageProfile = () => {
   return (
     <Container className="py-4">
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Manage Profile</h1>
-      </div>
+        <h1 className="manage-header">Manage Profile</h1>
 
       {/* Alerts */}
       {error && <Alert variant="danger">{error}</Alert>}

@@ -87,8 +87,8 @@ const ManageServices = () => {
   return (
     <Container className="py-4">
       {/* Header with Add Button */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Manage Services</h1>
+      <h1 className="manage-header">Manage Services</h1>
+      <div className="d-flex justify-content-end mb-4">
         <Button variant="primary" className="addService" onClick={() => handleShowModal()}>
           <Plus size={20} /> Add New Service
         </Button>

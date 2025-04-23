@@ -166,8 +166,8 @@ const ManageTrainers = () => {
     <div>
     <Container className="py-4">
       {/* Header with Add Button */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Manage Trainers</h1>
+      <h1 className="manage-header">Manage Trainers</h1>
+      <div className="d-flex justify-content-end align-items-center mb-4">
         <Button variant="primary" onClick={() => handleOpenCreateTrainer()}>
           <Plus size={20} /> Add New Trainer
         </Button>
